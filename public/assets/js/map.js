@@ -82,6 +82,9 @@ function initMap(containerId, dataUrl) {
             if (n.name) {
                 popupContent += 'Nome: ' + escHtml(n.name) + '<br>';
             }
+            if (n.email) {
+                popupContent += 'E-mail: ' + escHtml(n.email) + '<br>';
+            }
             if (n.phone) {
                 popupContent += 'WhatsApp: ' + escHtml(n.phone) + '<br>';
             }

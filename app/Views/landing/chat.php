@@ -692,12 +692,15 @@ const VIRAL_CONFIG = {
             html += `<a class="offer-link" href="${escapeHtml(C.offerLinkUrl)}" target="_blank" rel="noopener">${escapeHtml(C.offerLinkText || C.offerLinkUrl)}</a>`;
         }
 
-        // Add Name and Phone Form Fields
+        // Add Name, Email and Phone Form Fields
         html += `
         <div style="margin-bottom: 16px; text-align: left;">
             <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu Nome:</label>
             <input type="text" id="leadName" placeholder="Digite seu nome completo" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none; margin-bottom:12px;">
             
+            <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu E-mail:</label>
+            <input type="email" id="leadEmail" placeholder="seuemail@exemplo.com" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none; margin-bottom:12px;">
+
             <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu WhatsApp (Telefone):</label>
             <input type="tel" id="leadPhone" placeholder="(00) 00000-0000" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none;">
             <div id="formError" style="color:#f25c54; font-size:12px; margin-top:6px; display:none; font-weight:500;"></div>
@@ -724,6 +727,7 @@ const VIRAL_CONFIG = {
     // ════════════════════════════════════════
     async function handleViralize() {
         const nameInput = document.getElementById('leadName');
+        const emailInput = document.getElementById('leadEmail');
         const phoneInput = document.getElementById('leadPhone');
         const errDiv = document.getElementById('formError');
         
@@ -731,12 +735,20 @@ const VIRAL_CONFIG = {
         errDiv.textContent = '';
 
         const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
         const phone = phoneInput.value.trim();
 
         if (!name) {
             errDiv.textContent = 'Por favor, insira o seu nome.';
             errDiv.style.display = 'block';
             nameInput.focus();
+            return;
+        }
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errDiv.textContent = 'Por favor, insira um e-mail válido.';
+            errDiv.style.display = 'block';
+            emailInput.focus();
             return;
         }
 
@@ -763,6 +775,7 @@ const VIRAL_CONFIG = {
                     [C.csrfName]: C.csrfHash,
                     propagator_id: propagatorId,
                     name: name,
+                    email: email,
                     phone: phone,
                 }),
             });
@@ -783,7 +796,12 @@ const VIRAL_CONFIG = {
     function showSharePanel(url) {
         offerContent.classList.add('hidden');
         sharePanel.innerHTML = `
-            <div class="share-title">🎉 Seu link está pronto!</div>
+            <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
+            <div style="font-size:12px; color:#8696a0; margin-bottom:20px; line-height:1.5;">
+                Enviamos um e-mail com as regras e o seu link de acesso exclusivo.<br>
+                <strong>Seu desconto inicial de 10% já está ativo!</strong><br>
+                Indique amigos e aumente seu desconto para até 80%!
+            </div>
             <div class="share-link-box">
                 <input type="text" id="shareLinkInput" value="${escapeHtml(url)}" readonly>
                 <button type="button" id="btnCopyLink">Copiar</button>

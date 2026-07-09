@@ -126,6 +126,7 @@ class AnalyticsController extends BaseController
                 'platform'  => $p['platform'],
                 'ip'        => $p['ip'],
                 'name'      => $p['name'],
+                'email'     => $p['email'],
                 'phone'     => $p['phone'],
                 'discount'  => $discount,
             ];
@@ -191,7 +192,7 @@ class AnalyticsController extends BaseController
         fwrite($output, "\xEF\xBB\xBF");
 
         fputcsv($output, [
-            'Token', 'Token Pai', 'Nome', 'WhatsApp', 'Desconto (%)', 'Profundidade', 'IP', 'Plataforma',
+            'Token', 'Token Pai', 'Nome', 'E-mail', 'WhatsApp', 'Desconto (%)', 'Profundidade', 'IP', 'Plataforma',
             'Idioma', 'Resolução', 'Timezone', 'Latitude', 'Longitude',
             'Viralizado', 'Criado em',
         ]);
@@ -204,6 +205,7 @@ class AnalyticsController extends BaseController
                 $p['token'],
                 $p['parent_token'] ?? '-',
                 $p['name'] ?? '-',
+                $p['email'] ?? '-',
                 $p['phone'] ?? '-',
                 $discount . '%',
                 $p['depth'],

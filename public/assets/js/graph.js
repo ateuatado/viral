@@ -174,6 +174,9 @@ function initGraph(containerId, dataUrl) {
         if (d.name) {
             html += `Nome: ${d.name}<br>`;
         }
+        if (d.email) {
+            html += `E-mail: ${d.email}<br>`;
+        }
         if (d.phone) {
             html += `WhatsApp: ${d.phone}<br>`;
         }

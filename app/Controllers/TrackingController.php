@@ -29,6 +29,36 @@ class TrackingController extends BaseController
         $campaign = $campaignModel->findBySlug($campaignSlug);
         if (!$campaign) return $this->response->setJSON(['error' => 'Campaign not found'])->setStatusCode(404);
 
+        // Silent GeoIP geolocation if configured
+        $lat = null;
+        $lng = null;
+        $geoAccuracy = null;
+
+        if ((bool)$campaign['config_geoloc'] && $campaign['config_geoloc_mode'] === 'silent') {
+            $ip = $this->request->getIPAddress();
+            if ($ip === '127.0.0.1' || $ip === '::1') {
+                // São Paulo local test coordinates with small random offsets
+                $lat = -23.55052 + (mt_rand(-50, 50) / 1000);
+                $lng = -46.633308 + (mt_rand(-50, 50) / 1000);
+                $geoAccuracy = 5000;
+            } else {
+                try {
+                    $client = \Config\Services::curlrequest();
+                    $response = $client->get("http://ip-api.com/json/{$ip}", [
+                        'timeout' => 2,
+                    ]);
+                    $geoData = json_decode($response->getBody(), true);
+                    if (isset($geoData['status']) && $geoData['status'] === 'success') {
+                        $lat = (float)$geoData['lat'];
+                        $lng = (float)$geoData['lon'];
+                        $geoAccuracy = 15000;
+                    }
+                } catch (\Exception $e) {
+                    log_message('error', 'GeoIP Lookup Exception: ' . $e->getMessage());
+                }
+            }
+        }
+
         // Create visitor propagator (provisory, without own token for sharing yet)
         $tokenGen = new TokenGenerator();
         $trackingData = [
@@ -40,6 +70,9 @@ class TrackingController extends BaseController
             'screen_resolution' => $json['screen_resolution'] ?? null,
             'timezone' => $json['timezone'] ?? null,
             'platform' => $json['platform'] ?? null,
+            'latitude' => $lat,
+            'longitude' => $lng,
+            'geo_accuracy' => $geoAccuracy,
         ];
 
         $propagator = $tokenGen->createChildPropagator($campaign['id'], $parentToken, $trackingData);
