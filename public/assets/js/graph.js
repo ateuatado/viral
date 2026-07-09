@@ -163,11 +163,18 @@ function initGraph(containerId, dataUrl) {
 
     function tooltipHtml(d) {
         const type = d.is_seed ? 'Semente' : (d.viralized ? 'Viralizado' : 'Normal');
-        return `<strong>${d.token}</strong><br>` +
-               `Tipo: ${type}<br>` +
+        let html = `<strong>${d.token}</strong><br>`;
+        if (d.name) {
+            html += `Nome: ${d.name}<br>`;
+        }
+        if (d.phone) {
+            html += `WhatsApp: ${d.phone}<br>`;
+        }
+        html += `Tipo: ${type}<br>` +
                `Profundidade: ${d.depth}<br>` +
                `Plataforma: ${d.platform || '—'}<br>` +
                `Criado em: ${d.created_at || '—'}`;
+        return html;
     }
 
     function drag(simulation) {

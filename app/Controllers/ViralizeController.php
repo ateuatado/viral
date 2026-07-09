@@ -24,10 +24,19 @@ class ViralizeController extends BaseController
         $propagator = $propagatorModel->find($propagatorId);
         if (!$propagator) return $this->response->setJSON(['error' => 'Propagator not found'])->setStatusCode(404);
 
-        // Mark as viralized
+        $name = trim($json['name'] ?? '');
+        $phone = trim($json['phone'] ?? '');
+
+        if (empty($name) || empty($phone)) {
+            return $this->response->setJSON(['error' => 'Nome e WhatsApp são obrigatórios para resgatar.'])->setStatusCode(400);
+        }
+
+        // Mark as viralized and save contact info
         $propagatorModel->update($propagatorId, [
             'viralized' => true,
             'viralized_at' => date('Y-m-d H:i:s'),
+            'name' => $name,
+            'phone' => $phone,
         ]);
 
         // Get campaign for the share URL

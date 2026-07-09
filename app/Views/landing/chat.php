@@ -687,10 +687,30 @@ const VIRAL_CONFIG = {
         if (C.offerType === 'link' && C.offerLinkUrl) {
             html += `<a class="offer-link" href="${escapeHtml(C.offerLinkUrl)}" target="_blank" rel="noopener">${escapeHtml(C.offerLinkText || C.offerLinkUrl)}</a>`;
         }
+
+        // Add Name and Phone Form Fields
+        html += `
+        <div style="margin-bottom: 16px; text-align: left;">
+            <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu Nome:</label>
+            <input type="text" id="leadName" placeholder="Digite seu nome completo" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none; margin-bottom:12px;">
+            
+            <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu WhatsApp (Telefone):</label>
+            <input type="tel" id="leadPhone" placeholder="(00) 00000-0000" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none;">
+            <div id="formError" style="color:#f25c54; font-size:12px; margin-top:6px; display:none; font-weight:500;"></div>
+        </div>
+        `;
+
         html += `<button class="offer-cta" id="btnCta">${escapeHtml(C.offerCtaText)}</button>`;
 
         offerContent.innerHTML = html;
         offerOverlay.classList.add('visible');
+
+        // Add phone masking
+        const phoneInput = document.getElementById('leadPhone');
+        phoneInput.addEventListener('input', (e) => {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
 
         document.getElementById('btnCta').addEventListener('click', handleViralize);
     }
@@ -699,9 +719,34 @@ const VIRAL_CONFIG = {
     //  VIRALIZE
     // ════════════════════════════════════════
     async function handleViralize() {
+        const nameInput = document.getElementById('leadName');
+        const phoneInput = document.getElementById('leadPhone');
+        const errDiv = document.getElementById('formError');
+        
+        errDiv.style.display = 'none';
+        errDiv.textContent = '';
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        if (!name) {
+            errDiv.textContent = 'Por favor, insira o seu nome.';
+            errDiv.style.display = 'block';
+            nameInput.focus();
+            return;
+        }
+
+        const numericPhone = phone.replace(/\D/g, '');
+        if (numericPhone.length < 10 || numericPhone.length > 11) {
+            errDiv.textContent = 'Por favor, insira um WhatsApp válido com DDD.';
+            errDiv.style.display = 'block';
+            phoneInput.focus();
+            return;
+        }
+
         const btn = document.getElementById('btnCta');
         btn.disabled = true;
-        btn.textContent = 'Gerando link...';
+        btn.textContent = 'Processando...';
 
         try {
             const resp = await fetch(C.baseUrl + 'api/viralize', {
@@ -713,14 +758,18 @@ const VIRAL_CONFIG = {
                 body: JSON.stringify({
                     [C.csrfName]: C.csrfHash,
                     propagator_id: propagatorId,
+                    name: name,
+                    phone: phone,
                 }),
             });
             const data = await resp.json();
-            if (!resp.ok) throw new Error(data.error || 'Erro');
+            if (!resp.ok) throw new Error(data.error || 'Erro ao processar.');
             showSharePanel(data.share_url);
         } catch (e) {
             btn.disabled = false;
             btn.textContent = C.offerCtaText;
+            errDiv.textContent = e.message;
+            errDiv.style.display = 'block';
             console.error('Viralize error:', e);
         }
     }

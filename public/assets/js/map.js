@@ -76,17 +76,23 @@ function initMap(containerId, dataUrl) {
             }).addTo(map);
 
             const type = n.is_seed ? 'Semente' : (n.viralized ? 'Viralizado' : 'Normal');
-
-            marker.bindPopup(
+            let popupContent = 
                 '<div style="font-size:.85rem;line-height:1.6;">' +
-                '<strong>' + escHtml(n.token) + '</strong><br>' +
+                '<strong>' + escHtml(n.token) + '</strong><br>';
+            if (n.name) {
+                popupContent += 'Nome: ' + escHtml(n.name) + '<br>';
+            }
+            if (n.phone) {
+                popupContent += 'WhatsApp: ' + escHtml(n.phone) + '<br>';
+            }
+            popupContent +=
                 'Tipo: ' + type + '<br>' +
                 'Profundidade: ' + n.depth + '<br>' +
                 'Plataforma: ' + (n.platform || '—') + '<br>' +
                 'Criado em: ' + (n.created_at || '—') +
-                '</div>',
-                { className: 'dark-popup' }
-            );
+                '</div>';
+
+            marker.bindPopup(popupContent, { className: 'dark-popup' });
 
             markers.push(marker);
         });
