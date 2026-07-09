@@ -6,7 +6,14 @@ use CodeIgniter\Router\RouteCollection;
 
 // ===== ROOT =====
 $routes->get('/', static function () {
-    return redirect()->to('/admin');
+    if (auth()->loggedIn()) {
+        $user = auth()->user();
+        if ($user->inGroup('superadmin', 'admin')) {
+            return redirect()->to('/admin');
+        }
+        return redirect()->to('/user/dashboard');
+    }
+    return redirect()->to('/login');
 });
 
 // ===== SHIELD AUTH ROUTES =====
