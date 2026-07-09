@@ -31,3 +31,7 @@ Thumbs.db
 
 # Composer
 /composer.lock
+
+# Public temp folders
+/public/null/
+
