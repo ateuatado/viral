@@ -52,9 +52,9 @@ class CampaignController extends BaseController
             'og_title' => $this->request->getPost('og_title'),
             'og_description' => $this->request->getPost('og_description'),
             'contact_name' => $this->request->getPost('contact_name'),
-            'chat_messages' => json_encode([]),
-            'history' => json_encode([['action' => 'created', 'date' => date('Y-m-d H:i:s')]]),
-            'structure' => json_encode([]),
+            'chat_messages' => [],
+            'history' => [['action' => 'created', 'date' => date('Y-m-d H:i:s')]],
+            'structure' => [],
         ];
 
         // Handle OG image upload
@@ -147,10 +147,9 @@ class CampaignController extends BaseController
             $data['contact_avatar'] = '/assets/uploads/campaigns/' . $id . '/' . $newName;
         }
 
-        // Update history
-        $history = is_string($campaign['history']) ? json_decode($campaign['history'], true) : ($campaign['history'] ?? []);
+        $history = $campaign['history'] ?? [];
         $history[] = ['action' => 'updated', 'date' => date('Y-m-d H:i:s')];
-        $data['history'] = json_encode($history);
+        $data['history'] = $history;
 
         if (!$this->campaignModel->update($id, $data)) {
             return redirect()->back()->withInput()->with('errors', $this->campaignModel->errors());

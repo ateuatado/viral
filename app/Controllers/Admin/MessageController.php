@@ -42,7 +42,7 @@ class MessageController extends BaseController
         if (!is_array($messages)) $messages = [];
 
         $this->campaignModel->update($campaignId, [
-            'chat_messages' => json_encode($messages),
+            'chat_messages' => $messages,
         ]);
 
         return $this->response->setJSON(['success' => true, 'message' => 'Mensagens salvas!']);
