@@ -15,6 +15,9 @@ service('auth')->routes($routes);
 // ===== LANDING PAGE (PÚBLICA) =====
 $routes->get('v/(:segment)/(:segment)', 'LandingController::show/$1/$2');
 
+// ===== LOGIN POR TOKEN (PÚBLICO) =====
+$routes->get('login-token/(:segment)', 'User\UserDashboardController::loginByToken/$1');
+
 // ===== API PÚBLICA (sem auth) =====
 $routes->group('api', function ($routes) {
     $routes->post('track', 'TrackingController::store');
@@ -22,8 +25,8 @@ $routes->group('api', function ($routes) {
     $routes->post('viralize', 'ViralizeController::create');
 });
 
-// ===== ADMIN (Shield Protected) =====
-$routes->group('admin', ['filter' => 'session'], function ($routes) {
+// ===== ADMIN (Shield Protected - Group Filter) =====
+$routes->group('admin', ['filter' => 'group:superadmin,admin'], function ($routes) {
     $routes->get('/', 'Admin\DashboardController::index');
 
     // Campanhas CRUD
@@ -50,4 +53,10 @@ $routes->group('admin', ['filter' => 'session'], function ($routes) {
     // API Admin (JSON para JS)
     $routes->get('api/campaigns/(:segment)/propagators', 'Admin\AnalyticsController::propagatorsJson/$1');
     $routes->get('api/campaigns/(:segment)/events', 'Admin\AnalyticsController::eventsJson/$1');
+});
+
+// ===== USER DASHBOARD (Shield Protected - Leads) =====
+$routes->group('user', ['filter' => 'session'], function ($routes) {
+    $routes->get('dashboard', 'User\UserDashboardController::index');
+    $routes->get('api/network', 'User\UserDashboardController::networkJson');
 });

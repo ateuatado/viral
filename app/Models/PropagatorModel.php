@@ -11,7 +11,7 @@ class PropagatorModel extends Model
     protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $allowedFields = [
-        'id', 'campaign_id', 'token', 'parent_token', 'depth', 'name', 'phone', 'email',
+        'id', 'campaign_id', 'token', 'parent_token', 'depth', 'name', 'phone', 'email', 'auth_token',
         'fingerprint', 'ip', 'user_agent', 'referrer',
         'language', 'screen_resolution', 'timezone', 'platform',
         'latitude', 'longitude', 'geo_accuracy',
@@ -31,6 +31,11 @@ class PropagatorModel extends Model
     public function findByToken(string $token): ?array
     {
         return $this->where('token', $token)->first();
+    }
+
+    public function findByAuthToken(string $authToken): ?array
+    {
+        return $this->where('auth_token', $authToken)->first();
     }
 
     public function getChildren(string $parentToken): array

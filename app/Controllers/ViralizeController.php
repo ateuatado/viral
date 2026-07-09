@@ -34,22 +34,52 @@ class ViralizeController extends BaseController
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $this->response->setJSON(['error' => 'Formato de e-mail inválido.'])->setStatusCode(400);
-        }
-
-        $isFirstTime = !(bool)$propagator['viralized'];
+                $isFirstTime = !(bool)$propagator['viralized'];
+        $authToken = bin2hex(random_bytes(16));
+        $tempPassword = 'Temp!' . substr(bin2hex(random_bytes(4)), 0, 6);
 
         // Mark as viralized and save contact info
         $propagatorModel->update($propagatorId, [
-            'viralized' => true,
+            'viralized'    => true,
             'viralized_at' => date('Y-m-d H:i:s'),
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
+            'name'         => $name,
+            'email'        => $email,
+            'phone'        => $phone,
+            'auth_token'   => $authToken,
         ]);
+
+        // Create User account in Shield
+        if ($isFirstTime) {
+            try {
+                $users = auth()->getProvider();
+                $existingUser = $users->findByCredentials(['email' => $email]);
+                if (!$existingUser) {
+                    $userEntity = new \CodeIgniter\Shield\Entities\User([
+                        'username' => $propagator['token'],
+                        'email'    => $email,
+                        'password' => $tempPassword,
+                    ]);
+                    $users->save($userEntity);
+
+                    // Add to 'user' group
+                    $newUser = $users->findById($users->getInsertID());
+                    if ($newUser) {
+                        $newUser->addGroup('user');
+                        $newUser->forcePasswordReset();
+                    }
+                } else {
+                    // If user exists, update auth_token but keep existing account
+                    $newUser = $existingUser;
+                }
+            } catch (\Exception $e) {
+                log_message('error', 'Shield User Creation Error: ' . $e->getMessage());
+            }
+        }
 
         // Get campaign for the share URL
         $campaign = $campaignModel->find($propagator['campaign_id']);
         $shareUrl = base_url('v/' . $campaign['slug'] . '/' . $propagator['token']);
+        $loginUrl = base_url('login-token/' . $authToken);
 
         // Send silent confirmation email on first viralization
         if ($isFirstTime) {
@@ -75,19 +105,37 @@ class ViralizeController extends BaseController
                             Seu desconto de 10% já está reservado. A cada amigo que entrar pelo seu link e indicar outra pessoa, o seu desconto sobe mais 10% (limite de 80%!).
                         </p>
                     </div>
+
+                    <div style='background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin: 20px 0;'>
+                        <p style='margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #0f172a;'>
+                            🔑 Acesso ao Painel Exclusivo de Leads
+                        </p>
+                        <p style='margin: 0 0 12px 0; font-size: 13px; color: #64748b; line-height: 1.5;'>
+                            Criamos uma conta de usuário para você poder acompanhar quem entrou na sua rede em tempo real em um Grafo interativo sem expor nomes de terceiros. Acesse pelo botão de login rápido abaixo:
+                        </p>
+                        <div style='text-align: center; margin: 15px 0;'>
+                            <a href='" . htmlspecialchars($loginUrl) . "' style='background-color: #0f172a; color: #ffffff; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 14px; display: inline-block;'>
+                                Entrar no Painel e Definir Senha
+                            </a>
+                        </div>
+                        <p style='margin: 12px 0 0 0; font-size: 12px; color: #94a3b8;'>
+                            E-mail de acesso: <strong>" . htmlspecialchars($email) . "</strong><br>
+                            Senha temporária: <code style='background: #e2e8f0; padding: 2px 4px; border-radius: 3px; color: #475569;'>" . htmlspecialchars($tempPassword) . "</code>
+                        </p>
+                    </div>
                     
                     <p style='font-size: 15px; line-height: 1.6; color: #475569;'>
-                        Use o link abaixo para compartilhar diretamente, acompanhar quem entrou na sua rede e ver seu cupom de desconto em tempo real:
+                        Use o link abaixo para compartilhar diretamente com seus amigos e subir o seu desconto:
                     </p>
                     
                     <div style='text-align: center; margin: 30px 0;'>
                         <a href='" . htmlspecialchars($shareUrl) . "' style='background-color: #22c55e; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 15px; display: inline-block;'>
-                            Ver Meu Painel de Descontos
+                            Compartilhar Link do WhatsApp
                         </a>
                     </div>
                     
                     <p style='font-size: 13px; color: #64748b; line-height: 1.5;'>
-                        Ou copie e envie este link de indicação para seus amigos:<br>
+                        Link de indicação exclusivo:<br>
                         <code style='background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 13px; word-break: break-all; display: inline-block; margin-top: 6px;'>" . htmlspecialchars($shareUrl) . "</code>
                     </p>
                     
