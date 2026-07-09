@@ -23,9 +23,9 @@ class PropagatorModel extends Model
         'depth' => 'int',
         'is_seed' => 'boolean',
         'viralized' => 'boolean',
-        'latitude' => 'float',
-        'longitude' => 'float',
-        'geo_accuracy' => 'float',
+        'latitude' => '?float',
+        'longitude' => '?float',
+        'geo_accuracy' => '?float',
     ];
 
     public function findByToken(string $token): ?array
