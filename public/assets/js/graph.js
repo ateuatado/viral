@@ -108,7 +108,13 @@ function initGraph(containerId, dataUrl) {
             .selectAll('text')
             .data(nodes)
             .join('text')
-            .text(d => d.token ? d.token.substring(0, 6) : '')
+            .text(d => {
+                if (d.name) {
+                    const firstWord = d.name.trim().split(' ')[0];
+                    return firstWord.length > 12 ? firstWord.substring(0, 10) + '..' : firstWord;
+                }
+                return d.token ? d.token.substring(0, 6) : '';
+            })
             .attr('font-size', '9px')
             .attr('fill', '#94a3b8')
             .attr('text-anchor', 'middle')
