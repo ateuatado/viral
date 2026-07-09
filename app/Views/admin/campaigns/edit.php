@@ -63,7 +63,7 @@
             <div class="card border-success">
                 <div class="card-body">
                     <h6 class="card-title text-success mb-2"><i class="bi bi-link-45deg me-1"></i> Link Semente</h6>
-                    <?php $seedUrl = 'https://viral.test/v/' . esc($campaign['slug']) . '/' . esc($seedToken); ?>
+                    <?php $seedUrl = base_url('v/' . esc($campaign['slug']) . '/' . esc($seedToken)); ?>
                     <div class="input-group">
                         <input type="text" class="form-control" id="seedLink" value="<?= $seedUrl ?>" readonly>
                         <button class="btn btn-outline-success" type="button" id="copySeedLink" title="Copiar">
