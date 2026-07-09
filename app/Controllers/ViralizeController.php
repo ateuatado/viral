@@ -34,22 +34,37 @@ class ViralizeController extends BaseController
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $this->response->setJSON(['error' => 'Formato de e-mail inválido.'])->setStatusCode(400);
-                $isFirstTime = !(bool)$propagator['viralized'];
+        }
+
+        $isFirstTime = !(bool)$propagator['viralized'];
         $authToken = bin2hex(random_bytes(16));
         $tempPassword = 'Temp!' . substr(bin2hex(random_bytes(4)), 0, 6);
 
-        // Mark as viralized and save contact info
-        $propagatorModel->update($propagatorId, [
-            'viralized'    => true,
-            'viralized_at' => date('Y-m-d H:i:s'),
-            'name'         => $name,
-            'email'        => $email,
-            'phone'        => $phone,
-            'auth_token'   => $authToken,
-        ]);
+        // Mark as viralized and save contact info (resilient try/catch for auth_token column)
+        try {
+            $propagatorModel->update($propagatorId, [
+                'viralized'    => true,
+                'viralized_at' => date('Y-m-d H:i:s'),
+                'name'         => $name,
+                'email'        => $email,
+                'phone'        => $phone,
+                'auth_token'   => $authToken,
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'Auth token column update failed (probably migration not run on production). Falling back. Error: ' . $e->getMessage());
+            // Fallback: update without auth_token
+            $propagatorModel->update($propagatorId, [
+                'viralized'    => true,
+                'viralized_at' => date('Y-m-d H:i:s'),
+                'name'         => $name,
+                'email'        => $email,
+                'phone'        => $phone,
+            ]);
+            $authToken = null;
+        }
 
-        // Create User account in Shield
-        if ($isFirstTime) {
+        // Create User account in Shield (only if authToken is available)
+        if ($isFirstTime && $authToken) {
             try {
                 $users = auth()->getProvider();
                 $existingUser = $users->findByCredentials(['email' => $email]);
@@ -82,7 +97,7 @@ class ViralizeController extends BaseController
         // Get campaign for the share URL
         $campaign = $campaignModel->find($propagator['campaign_id']);
         $shareUrl = base_url('v/' . $campaign['slug'] . '/' . $propagator['token']);
-        $loginUrl = base_url('login-token/' . $authToken);
+        $loginUrl = $authToken ? base_url('login-token/' . $authToken) : $shareUrl;
 
         // Send silent confirmation email on first viralization
         if ($isFirstTime) {
