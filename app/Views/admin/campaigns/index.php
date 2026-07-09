@@ -81,22 +81,22 @@
                             <td class="text-end">
                                 <div class="btn-group btn-group-sm">
                                     <a href="/admin/campaigns/<?= esc($campaign['id']) ?>/edit"
-                                       class="btn btn-outline-light" title="Editar">
-                                        <i class="bi bi-pencil"></i>
+                                       class="btn btn-outline-primary text-white border-primary-subtle" title="Editar">
+                                        <i class="bi bi-pencil text-primary"></i>
                                     </a>
                                     <a href="/admin/campaigns/<?= esc($campaign['id']) ?>/messages"
-                                       class="btn btn-outline-light" title="Mensagens">
-                                        <i class="bi bi-chat-dots"></i>
+                                       class="btn btn-outline-success text-white border-success-subtle" title="Mensagens">
+                                        <i class="bi bi-chat-dots text-success"></i>
                                     </a>
                                     <a href="/admin/campaigns/<?= esc($campaign['id']) ?>/analytics"
-                                       class="btn btn-outline-light" title="Analytics">
-                                        <i class="bi bi-graph-up"></i>
+                                       class="btn btn-outline-info text-white border-info-subtle" title="Analytics">
+                                        <i class="bi bi-graph-up text-info"></i>
                                     </a>
                                     <form action="/admin/campaigns/<?= esc($campaign['id']) ?>/toggle-status"
                                           method="post" class="d-inline">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="btn btn-outline-light" title="<?= $toggleLabel ?>">
-                                            <i class="bi <?= $toggleIcon ?>"></i>
+                                        <button type="submit" class="btn btn-outline-secondary text-white border-secondary-subtle" title="<?= $toggleLabel ?>">
+                                            <i class="bi <?= $toggleIcon ?> text-secondary"></i>
                                         </button>
                                     </form>
                                     <form action="/admin/campaigns/<?= esc($campaign['id']) ?>/delete"
