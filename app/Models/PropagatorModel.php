@@ -83,4 +83,33 @@ class PropagatorModel extends Model
                        ->first();
         return (int) ($result['depth'] ?? 0);
     }
+
+    public function calculateMaxDepthBelow(string $token, string $campaignId): int
+    {
+        $propagators = $this->where('campaign_id', $campaignId)->findAll();
+        
+        $childrenMap = [];
+        foreach ($propagators as $p) {
+            if (!empty($p['parent_token']) && (bool)$p['viralized']) {
+                $childrenMap[$p['parent_token']][] = $p['token'];
+            }
+        }
+
+        return $this->getTreeDepth($token, $childrenMap);
+    }
+
+    private function getTreeDepth(string $token, array &$childrenMap): int
+    {
+        if (!isset($childrenMap[$token]) || empty($childrenMap[$token])) {
+            return 0;
+        }
+        $max = 0;
+        foreach ($childrenMap[$token] as $childToken) {
+            $d = 1 + $this->getTreeDepth($childToken, $childrenMap);
+            if ($d > $max) {
+                $max = $d;
+            }
+        }
+        return $max;
+    }
 }

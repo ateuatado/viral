@@ -111,7 +111,8 @@ function initGraph(containerId, dataUrl) {
             .text(d => {
                 if (d.name) {
                     const firstWord = d.name.trim().split(' ')[0];
-                    return firstWord.length > 12 ? firstWord.substring(0, 10) + '..' : firstWord;
+                    const displayName = firstWord.length > 12 ? firstWord.substring(0, 10) + '..' : firstWord;
+                    return d.discount > 0 ? `${displayName} (${d.discount}%)` : displayName;
                 }
                 return d.token ? d.token.substring(0, 6) : '';
             })
@@ -175,6 +176,9 @@ function initGraph(containerId, dataUrl) {
         }
         if (d.phone) {
             html += `WhatsApp: ${d.phone}<br>`;
+        }
+        if (d.discount !== undefined) {
+            html += `Desconto Acumulado: ${d.discount}%<br>`;
         }
         html += `Tipo: ${type}<br>` +
                `Profundidade: ${d.depth}<br>` +

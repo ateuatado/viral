@@ -85,6 +85,9 @@ function initMap(containerId, dataUrl) {
             if (n.phone) {
                 popupContent += 'WhatsApp: ' + escHtml(n.phone) + '<br>';
             }
+            if (n.discount !== undefined) {
+                popupContent += 'Desconto Acumulado: ' + n.discount + '%<br>';
+            }
             popupContent +=
                 'Tipo: ' + type + '<br>' +
                 'Profundidade: ' + n.depth + '<br>' +

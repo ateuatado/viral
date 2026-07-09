@@ -472,6 +472,10 @@ const VIRAL_CONFIG = {
     csrfName: '<?= esc($csrfName) ?>',
     csrfHash: '<?= esc($csrfHash) ?>',
     baseUrl: '<?= base_url() ?>',
+    isParentViralized: <?= $isParentViralized ? 'true' : 'false' ?>,
+    parentName: '<?= esc($parentName ?? '') ?>',
+    parentDiscount: <?= (int)$parentDiscount ?>,
+    parentMaxDepth: <?= (int)$parentMaxDepth ?>,
 };
 </script>
 
@@ -764,6 +768,8 @@ const VIRAL_CONFIG = {
             });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data.error || 'Erro ao processar.');
+            // Save token to local storage so we know we own this link
+            localStorage.setItem('my_viral_token_' + C.campaignSlug, data.token);
             showSharePanel(data.share_url);
         } catch (e) {
             btn.disabled = false;
@@ -806,11 +812,82 @@ const VIRAL_CONFIG = {
         });
     }
 
+    function showOwnerDashboard() {
+        offerContent.classList.add('hidden');
+        
+        const nextDepth = C.parentMaxDepth + 1;
+        const nextDiscount = Math.min(80, nextDepth * 10);
+        const percentText = C.parentDiscount > 0 ? `${C.parentDiscount}% de desconto!` : 'nenhum desconto ainda.';
+        
+        let progressHtml = '';
+        if (C.parentDiscount < 80) {
+            progressHtml = `
+            <div style="background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#8696a0;">
+                <div style="color:#22c55e; font-weight:600; font-size:14px; margin-bottom:8px;">🎯 Próxima Meta:</div>
+                Se o seu amigo que você indicou compartilhar com outra pessoa, seu desconto sobe para <strong style="color:#e9edef;">${nextDiscount}%</strong>!<br>
+                <span style="font-size:11px; color:#64748b;">(Meta atual: nível ${nextDepth} de profundidade na sua rede).</span>
+            </div>`;
+        } else {
+            progressHtml = `
+            <div style="background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.2); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#22c55e;">
+                🏆 <strong>Parabéns!</strong> Você atingiu a profundidade máxima e conquistou o desconto limite de <strong>80%</strong>!
+            </div>`;
+        }
+
+        const shareUrl = C.baseUrl + 'v/' + C.campaignSlug + '/' + C.parentToken;
+
+        sharePanel.innerHTML = `
+            <div class="share-title" style="margin-bottom: 8px;">👋 Olá, ${escapeHtml(C.parentName)}!</div>
+            <div style="font-size: 14px; color: #8696a0; margin-bottom: 20px;">
+                Você conquistou acumulado <strong style="color:#22c55e; font-size:16px;">${percentText}</strong>
+            </div>
+            
+            <div style="text-align: left; font-size:13px; color:#8696a0; margin-bottom: 12px;">
+                🔑 Níveis ativos na sua rede: <strong>${C.parentMaxDepth}</strong>
+            </div>
+
+            ${progressHtml}
+
+            <div class="share-link-box">
+                <input type="text" id="shareLinkInput" value="${escapeHtml(shareUrl)}" readonly>
+                <button type="button" id="btnCopyLink">Copiar</button>
+            </div>
+            <button type="button" class="share-wa-btn" id="btnShareWa">
+                <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                Compartilhar no WhatsApp
+            </button>`;
+            
+        sharePanel.classList.add('visible');
+        offerOverlay.classList.add('visible');
+
+        document.getElementById('btnCopyLink').addEventListener('click', () => {
+            const input = document.getElementById('shareLinkInput');
+            navigator.clipboard.writeText(input.value).then(() => {
+                document.getElementById('btnCopyLink').textContent = 'Copiado! ✓';
+                setTimeout(() => {
+                    document.getElementById('btnCopyLink').textContent = 'Copiar';
+                }, 2000);
+            });
+        });
+
+        document.getElementById('btnShareWa').addEventListener('click', () => {
+            const text = C.offerTitle
+                ? C.offerTitle + ' — ' + shareUrl
+                : shareUrl;
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
+        });
+    }
+
     // ════════════════════════════════════════
     //  INIT
     // ════════════════════════════════════════
-    sendTracking();
-    playMessages();
+    const mySavedToken = localStorage.getItem('my_viral_token_' + C.campaignSlug);
+    if (C.isParentViralized && mySavedToken === C.parentToken) {
+        showOwnerDashboard();
+    } else {
+        sendTracking();
+        playMessages();
+    }
 
 })();
 </script>

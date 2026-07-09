@@ -85,8 +85,34 @@ class AnalyticsController extends BaseController
         $links    = [];
         $tokenMap = [];
 
+        // Build children map for fast memory calculation of tree depths
+        $childrenMap = [];
+        foreach ($propagators as $p) {
+            if (!empty($p['parent_token']) && (bool)$p['viralized']) {
+                $childrenMap[$p['parent_token']][] = $p['token'];
+            }
+        }
+
+        // Recursive tree depth calculator
+        $getTreeDepth = function(string $token) use (&$childrenMap, &$getTreeDepth): int {
+            if (!isset($childrenMap[$token]) || empty($childrenMap[$token])) {
+                return 0;
+            }
+            $max = 0;
+            foreach ($childrenMap[$token] as $childToken) {
+                $d = 1 + $getTreeDepth($childToken);
+                if ($d > $max) {
+                    $max = $d;
+                }
+            }
+            return $max;
+        };
+
         foreach ($propagators as $p) {
             $tokenMap[$p['token']] = $p['id'];
+
+            $maxDepthBelow = $getTreeDepth($p['token']);
+            $discount = min(80, $maxDepthBelow * 10);
 
             $nodes[] = [
                 'id'        => $p['id'],
@@ -101,6 +127,7 @@ class AnalyticsController extends BaseController
                 'ip'        => $p['ip'],
                 'name'      => $p['name'],
                 'phone'     => $p['phone'],
+                'discount'  => $discount,
             ];
 
             if (!empty($p['parent_token']) && isset($tokenMap[$p['parent_token']])) {
@@ -131,6 +158,29 @@ class AnalyticsController extends BaseController
 
         $propagators = $this->propagatorModel->getCampaignPropagators($campaignId);
 
+        // Build children map for fast memory calculation of tree depths
+        $childrenMap = [];
+        foreach ($propagators as $p) {
+            if (!empty($p['parent_token']) && (bool)$p['viralized']) {
+                $childrenMap[$p['parent_token']][] = $p['token'];
+            }
+        }
+
+        // Recursive tree depth calculator
+        $getTreeDepth = function(string $token) use (&$childrenMap, &$getTreeDepth): int {
+            if (!isset($childrenMap[$token]) || empty($childrenMap[$token])) {
+                return 0;
+            }
+            $max = 0;
+            foreach ($childrenMap[$token] as $childToken) {
+                $d = 1 + $getTreeDepth($childToken);
+                if ($d > $max) {
+                    $max = $d;
+                }
+            }
+            return $max;
+        };
+
         $filename = 'viral_' . ($campaign['slug'] ?? $campaignId) . '_' . date('Y-m-d') . '.csv';
 
         $this->response->setHeader('Content-Type', 'text/csv; charset=UTF-8');
@@ -141,17 +191,21 @@ class AnalyticsController extends BaseController
         fwrite($output, "\xEF\xBB\xBF");
 
         fputcsv($output, [
-            'Token', 'Token Pai', 'Nome', 'WhatsApp', 'Profundidade', 'IP', 'Plataforma',
+            'Token', 'Token Pai', 'Nome', 'WhatsApp', 'Desconto (%)', 'Profundidade', 'IP', 'Plataforma',
             'Idioma', 'Resolução', 'Timezone', 'Latitude', 'Longitude',
             'Viralizado', 'Criado em',
         ]);
 
         foreach ($propagators as $p) {
+            $maxDepthBelow = $getTreeDepth($p['token']);
+            $discount = min(80, $maxDepthBelow * 10);
+
             fputcsv($output, [
                 $p['token'],
                 $p['parent_token'] ?? '-',
                 $p['name'] ?? '-',
                 $p['phone'] ?? '-',
+                $discount . '%',
                 $p['depth'],
                 $p['ip'] ?? '-',
                 $p['platform'] ?? '-',
