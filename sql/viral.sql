@@ -76,7 +76,7 @@ CREATE TABLE `auth_identities` (
 
 LOCK TABLES `auth_identities` WRITE;
 /*!40000 ALTER TABLE `auth_identities` DISABLE KEYS */;
-INSERT INTO `auth_identities` VALUES (1,1,'email_password',NULL,'admin@viral.test','$2y$12$unEouYZeyDvi2cWpXQSEwOOBlU5sDVG9TsQZ7KCaz2t9xJbQXwWrm',NULL,NULL,0,'2026-07-09 01:47:02','2026-07-09 01:30:44','2026-07-09 01:47:02');
+INSERT INTO `auth_identities` VALUES (1,1,'email_password',NULL,'marcosantofoto@gmail.com','$2y$12$unEouYZeyDvi2cWpXQSEwOOBlU5sDVG9TsQZ7KCaz2t9xJbQXwWrm',NULL,NULL,0,'2026-07-09 01:47:02','2026-07-09 01:30:44','2026-07-09 01:47:02');
 /*!40000 ALTER TABLE `auth_identities` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +108,7 @@ CREATE TABLE `auth_logins` (
 
 LOCK TABLES `auth_logins` WRITE;
 /*!40000 ALTER TABLE `auth_logins` DISABLE KEYS */;
-INSERT INTO `auth_logins` VALUES (1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','email_password','marcosantofoto@gmail.com',NULL,'2026-07-09 01:44:12',0),(2,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','email_password','admin@viral.test',1,'2026-07-09 01:47:02',1);
+INSERT INTO `auth_logins` VALUES (1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','email_password','marcosantofoto@gmail.com',NULL,'2026-07-09 01:44:12',0),(2,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','email_password','marcosantofoto@gmail.com',1,'2026-07-09 01:47:02',1);
 /*!40000 ALTER TABLE `auth_logins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,7 +278,7 @@ CREATE TABLE `campaigns` (
 
 LOCK TABLES `campaigns` WRITE;
 /*!40000 ALTER TABLE `campaigns` DISABLE KEYS */;
-INSERT INTO `campaigns` VALUES ('1137c730-f8dc-420a-b367-ec241e66799e','Imers├úo Branding Pessoal','imersao-branding-pessoal','Capturar interesses em ensaios fotograficos','Ensaio fotograficos','[{\"action\":\"created\",\"date\":\"2026-07-09 02:01:11\"}]','[]','active',0,'explicit','text','','',NULL,'','','Compartilhe e ganhe!','','',NULL,'',NULL,'[{\"type\":\"text\",\"content\":\"oi.\\nEst├í na hora de renovar suas fotos.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"Na JamesWebbStudio voc├¬ faz as melhores fotos para reposcionamento de imagem.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"Fotos profisionais te levam para outro n├¡vel de credibilidade.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"\",\"url\":\"\",\"name\":\"\",\"delay\":1500}]','2026-07-09 05:01:11','2026-07-09 05:06:32',NULL);
+INSERT INTO `campaigns` VALUES ('1137c730-f8dc-420a-b367-ec241e66799e','Imersâ”œÃºo Branding Pessoal','imersao-branding-pessoal','Capturar interesses em ensaios fotograficos','Ensaio fotograficos','[{\"action\":\"created\",\"date\":\"2026-07-09 02:01:11\"}]','[]','active',0,'explicit','text','','',NULL,'','','Compartilhe e ganhe!','','',NULL,'',NULL,'[{\"type\":\"text\",\"content\":\"oi.\\nEstâ”œÃ­ na hora de renovar suas fotos.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"Na JamesWebbStudio vocâ”œÂ¬ faz as melhores fotos para reposcionamento de imagem.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"Fotos profisionais te levam para outro nâ”œÂ¡vel de credibilidade.\",\"url\":\"\",\"name\":\"\",\"delay\":1500},{\"type\":\"text\",\"content\":\"\",\"url\":\"\",\"name\":\"\",\"delay\":1500}]','2026-07-09 05:01:11','2026-07-09 05:06:32',NULL);
 /*!40000 ALTER TABLE `campaigns` ENABLE KEYS */;
 UNLOCK TABLES;
 
