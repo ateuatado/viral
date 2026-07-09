@@ -48,7 +48,7 @@ class ViralizeController extends BaseController
             'id' => generate_uuid(),
             'propagator_id' => $propagatorId,
             'event_type' => 'link_generated',
-            'metadata' => json_encode(['share_url' => $shareUrl]),
+            'metadata' => ['share_url' => $shareUrl],
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 

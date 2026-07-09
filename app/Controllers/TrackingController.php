@@ -49,7 +49,7 @@ class TrackingController extends BaseController
             'id' => generate_uuid(),
             'propagator_id' => $propagator['id'],
             'event_type' => 'page_view',
-            'metadata' => json_encode(['user_agent' => $trackingData['user_agent']]),
+            'metadata' => ['user_agent' => $trackingData['user_agent']],
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
@@ -89,7 +89,7 @@ class TrackingController extends BaseController
             'id' => generate_uuid(),
             'propagator_id' => $propagatorId,
             'event_type' => $eventType,
-            'metadata' => json_encode($json),
+            'metadata' => $json,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
