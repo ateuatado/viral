@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Viral Admin — Design Tokens (CSS Custom Properties)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* ── Colour — Backgrounds ───────────────────────────────────────────── */
+    --bg-body:      #0f1117;
+    --bg-sidebar:   #1a1d26;
+    --bg-card:      #1e2130;
+    --bg-card-alt:  #252838;
+    --bg-input:     #1a1d26;
+    --bg-hover:     rgba(99, 102, 241, 0.08);
+    --bg-overlay:   rgba(15, 17, 23, 0.7);
+
+    /* ── Colour — Brand / Accent ────────────────────────────────────────── */
+    --primary:       #6366f1;
+    --primary-hover: #818cf8;
+    --primary-muted: rgba(99, 102, 241, 0.15);
+    --primary-glow:  rgba(99, 102, 241, 0.35);
+
+    /* ── Colour — Semantic ──────────────────────────────────────────────── */
+    --success:       #22c55e;
+    --success-muted: rgba(34, 197, 94, 0.15);
+    --warning:       #f59e0b;
+    --warning-muted: rgba(245, 158, 11, 0.15);
+    --danger:        #ef4444;
+    --danger-muted:  rgba(239, 68, 68, 0.15);
+    --info:          #3b82f6;
+    --info-muted:    rgba(59, 130, 246, 0.15);
+
+    /* ── Colour — Text ──────────────────────────────────────────────────── */
+    --text:          #e2e8f0;
+    --text-muted:    #94a3b8;
+    --text-dark:     #64748b;
+    --text-heading:  #f1f5f9;
+    --text-link:     var(--primary);
+
+    /* ── Colour — Borders ───────────────────────────────────────────────── */
+    --border:        rgba(148, 163, 184, 0.10);
+    --border-strong: rgba(148, 163, 184, 0.18);
+
+    /* ── Typography ─────────────────────────────────────────────────────── */
+    --font-family:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --fs-xs:   0.75rem;   /* 12 px */
+    --fs-sm:   0.8125rem; /* 13 px */
+    --fs-base: 0.875rem;  /* 14 px */
+    --fs-md:   1rem;      /* 16 px */
+    --fs-lg:   1.125rem;  /* 18 px */
+    --fs-xl:   1.25rem;   /* 20 px */
+    --fs-2xl:  1.5rem;    /* 24 px */
+    --fs-3xl:  1.875rem;  /* 30 px */
+    --fw-light:    300;
+    --fw-normal:   400;
+    --fw-medium:   500;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+    --lh-tight:  1.25;
+    --lh-normal: 1.5;
+    --lh-loose:  1.75;
+
+    /* ── Spacing Scale ──────────────────────────────────────────────────── */
+    --space-1:  0.25rem;  /* 4 px  */
+    --space-2:  0.5rem;   /* 8 px  */
+    --space-3:  0.75rem;  /* 12 px */
+    --space-4:  1rem;     /* 16 px */
+    --space-5:  1.25rem;  /* 20 px */
+    --space-6:  1.5rem;   /* 24 px */
+    --space-8:  2rem;     /* 32 px */
+    --space-10: 2.5rem;   /* 40 px */
+    --space-12: 3rem;     /* 48 px */
+
+    /* ── Border Radius ──────────────────────────────────────────────────── */
+    --radius-sm:   0.375rem;
+    --radius:      0.75rem;
+    --radius-lg:   1rem;
+    --radius-xl:   1.25rem;
+    --radius-full: 9999px;
+
+    /* ── Shadows ────────────────────────────────────────────────────────── */
+    --shadow-sm:  0 1px 2px  rgba(0, 0, 0, 0.25);
+    --shadow:     0 4px 6px  -1px rgba(0, 0, 0, 0.3),
+                  0 2px 4px  -2px rgba(0, 0, 0, 0.2);
+    --shadow-md:  0 10px 15px -3px rgba(0, 0, 0, 0.35),
+                  0 4px 6px  -4px rgba(0, 0, 0, 0.25);
+    --shadow-lg:  0 20px 25px -5px rgba(0, 0, 0, 0.4),
+                  0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 20px var(--primary-glow);
+
+    /* ── Transitions ────────────────────────────────────────────────────── */
+    --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base:   250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow:   350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    --sidebar-width:     260px;
+    --sidebar-collapsed: 0px;
+    --navbar-height:     64px;
+    --content-max-width: 1400px;
+
+    /* ── Z-index Scale ──────────────────────────────────────────────────── */
+    --z-sidebar:  1000;
+    --z-navbar:   1010;
+    --z-overlay:  1020;
+    --z-modal:    1030;
+    --z-toast:    1050;
+
+    /* ── Gradients ──────────────────────────────────────────────────────── */
+    --gradient-primary:  linear-gradient(135deg, #6366f1, #818cf8);
+    --gradient-success:  linear-gradient(135deg, #22c55e, #4ade80);
+    --gradient-warning:  linear-gradient(135deg, #f59e0b, #fbbf24);
+    --gradient-danger:   linear-gradient(135deg, #ef4444, #f87171);
+    --gradient-info:     linear-gradient(135deg, #3b82f6, #60a5fa);
+    --gradient-brand:    linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    --gradient-dark:     linear-gradient(180deg, #1a1d26, #0f1117);
+
+    /* ── Glassmorphism ──────────────────────────────────────────────────── */
+    --glass-bg:     rgba(30, 33, 48, 0.60);
+    --glass-border: rgba(148, 163, 184, 0.08);
+    --glass-blur:   12px;
+}

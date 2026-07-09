@@ -1,0 +1,33 @@
+# CodeIgniter 4
+/vendor/
+/writable/logs/*
+!/writable/logs/index.html
+/writable/cache/*
+!/writable/cache/index.html
+/writable/session/*
+!/writable/session/index.html
+/writable/debugbar/*
+/writable/uploads/*
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+/public/assets/uploads/campaigns/*
+!/public/assets/uploads/campaigns/.gitkeep
+
+# PHPUnit
+/phpunit.result.cache
+
+# Composer
+/composer.lock
