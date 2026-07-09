@@ -15,7 +15,7 @@ class TrackingEventModel extends Model
     ];
     protected $useTimestamps = false;
 
-    protected $casts = [
+    protected array $casts = [
         'metadata' => 'json-array',
     ];
 

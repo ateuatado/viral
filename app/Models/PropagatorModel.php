@@ -19,7 +19,7 @@ class PropagatorModel extends Model
     ];
     protected $useTimestamps = false;
 
-    protected $casts = [
+    protected array $casts = [
         'depth' => 'int',
         'is_seed' => 'boolean',
         'viralized' => 'boolean',

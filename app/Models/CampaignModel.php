@@ -36,7 +36,7 @@ class CampaignModel extends Model
         ],
     ];
 
-    protected $casts = [
+    protected array $casts = [
         'config_geoloc' => 'boolean',
         'chat_messages' => 'json-array',
         'history' => 'json-array',
