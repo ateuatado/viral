@@ -327,27 +327,4 @@ class AnalyticsController extends BaseController
 
         return view('admin/analytics/leads', $data);
     }
-
-    // ── Temporary SMTP debug action ─────────────────────────────────────
-    public function testEmail()
-    {
-        $email = \Config\Services::email();
-        $email->setTo('marcosantofoto@gmail.com');
-        $email->setSubject('Teste de Depuração SMTP — AWS SES');
-        $email->setMessage('<h1>Teste do Sistema de Viralização</h1><p>Esta é uma mensagem de teste para diagnosticar a conexão SMTP com o Amazon SES.</p>');
-
-        echo "<h2>Iniciando tentativa de envio de e-mail...</h2>";
-
-        if ($email->send(false)) {
-            echo "<h3 style='color:green;'>✓ E-mail enviado com sucesso!</h3>";
-        } else {
-            echo "<h3 style='color:red;'>✗ Falha ao enviar o e-mail!</h3>";
-        }
-
-        echo "<h4>Log do Depurador SMTP:</h4>";
-        echo "<pre style='background:#0f172a; color:#38bdf8; padding:1.5rem; border-radius:.5rem; overflow:auto; font-size:12px; line-height:1.5;'>";
-        echo htmlspecialchars($email->printDebugger(['headers', 'subject', 'body']));
-        echo "</pre>";
-        exit;
-    }
 }

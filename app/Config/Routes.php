@@ -12,9 +12,6 @@ $routes->get('/', static function () {
 // ===== SHIELD AUTH ROUTES =====
 service('auth')->routes($routes);
 
-// ===== TESTE EMAIL =====
-$routes->get('test-email', 'Admin\AnalyticsController::testEmail');
-
 // ===== LANDING PAGE (PÚBLICA) =====
 $routes->get('v/(:segment)/(:segment)', 'LandingController::show/$1/$2');
 
