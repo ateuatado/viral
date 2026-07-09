@@ -15,6 +15,25 @@
     </a>
 </div>
 
+<!-- ── Navigation tabs ────────────────────────────────────────────── -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics" class="btn btn-primary">
+        <i class="bi bi-bar-chart-line me-1"></i> Visão Geral
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/graph" class="btn btn-outline-secondary">
+        <i class="bi bi-diagram-2 me-1"></i> Grafo Visual
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/map" class="btn btn-outline-secondary">
+        <i class="bi bi-map me-1"></i> Mapa de Geolocation
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/leads" class="btn btn-outline-secondary">
+        <i class="bi bi-people me-1"></i> Lista de Leads
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/export" class="btn btn-outline-secondary ms-auto">
+        <i class="bi bi-download me-1"></i> Exportar CSV
+    </a>
+</div>
+
 <!-- ── Stat Cards — Row 1 ─────────────────────────────────────────── -->
 <div class="row g-4 mb-4">
     <!-- Total de Acessos -->
@@ -87,20 +106,6 @@
     </div>
 </div>
 
-<!-- ── Action Buttons ─────────────────────────────────────────────── -->
-<div class="d-flex flex-wrap gap-3">
-    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/graph"
-       class="btn btn-primary">
-        <i class="bi bi-diagram-2 me-1"></i> Ver Grafo
-    </a>
-    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/map"
-       class="btn btn-primary">
-        <i class="bi bi-map me-1"></i> Ver Mapa
-    </a>
-    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/export"
-       class="btn btn-outline-secondary">
-        <i class="bi bi-download me-1"></i> Exportar CSV
-    </a>
-</div>
+
 
 <?= $this->endSection() ?>

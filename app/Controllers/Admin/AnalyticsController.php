@@ -225,4 +225,106 @@ class AnalyticsController extends BaseController
 
         return $this->response;
     }
+
+    // ── Leads list page (hierarchical tree) ─────────────────────────────
+    public function leads(string $campaignId)
+    {
+        $campaign = $this->campaignModel->find($campaignId);
+        if (!$campaign) {
+            return redirect()->to('/admin/campaigns');
+        }
+
+        $propagators = $this->propagatorModel->getCampaignPropagators($campaignId);
+
+        // 1. Build relationships map
+        $childrenMap = []; // parent_token => array of children tokens
+        $nodesByToken = [];
+        foreach ($propagators as $p) {
+            $nodesByToken[$p['token']] = $p;
+            if (!empty($p['parent_token'])) {
+                $childrenMap[$p['parent_token']][] = $p['token'];
+            }
+        }
+
+        // 2. Find seeds (roots of the tree)
+        $seeds = [];
+        foreach ($propagators as $p) {
+            if ($p['is_seed'] || empty($p['parent_token'])) {
+                $seeds[] = $p['token'];
+            }
+        }
+
+        // 3. Recursive helper to calculate sub-tree depths (for discounts)
+        $getTreeDepth = function(string $token) use (&$childrenMap, &$getTreeDepth, &$nodesByToken): int {
+            if (!isset($childrenMap[$token]) || empty($childrenMap[$token])) {
+                return 0;
+            }
+            $max = 0;
+            foreach ($childrenMap[$token] as $childToken) {
+                // Only count depth of viralized descendants
+                if (isset($nodesByToken[$childToken])) {
+                    $child = $nodesByToken[$childToken];
+                    if ((bool)$child['viralized']) {
+                        $d = 1 + $getTreeDepth($childToken);
+                        if ($d > $max) {
+                            $max = $d;
+                        }
+                    }
+                }
+            }
+            return $max;
+        };
+
+        // 4. Recursive builder for the hierarchy
+        $buildTree = function(string $token) use (&$childrenMap, &$nodesByToken, &$buildTree, $getTreeDepth): array {
+            $node = $nodesByToken[$token];
+            
+            $maxDepthBelow = $getTreeDepth($token);
+            $discount = min(80, $maxDepthBelow * 10);
+            
+            $visualizersCount = 0;
+            $viralizedChildren = [];
+            
+            if (isset($childrenMap[$token])) {
+                foreach ($childrenMap[$token] as $childToken) {
+                    if (isset($nodesByToken[$childToken])) {
+                        $childNode = $nodesByToken[$childToken];
+                        if ((bool)$childNode['viralized']) {
+                            $viralizedChildren[] = $buildTree($childToken);
+                        } else {
+                            $visualizersCount++;
+                        }
+                    }
+                }
+            }
+            
+            return [
+                'id' => $node['id'],
+                'token' => $node['token'],
+                'name' => $node['name'],
+                'email' => $node['email'],
+                'phone' => $node['phone'],
+                'is_seed' => (bool)$node['is_seed'],
+                'viralized' => (bool)$node['viralized'],
+                'depth' => (int)$node['depth'],
+                'discount' => $discount,
+                'visualizers' => $visualizersCount,
+                'children' => $viralizedChildren,
+            ];
+        };
+
+        $tree = [];
+        foreach ($seeds as $seedToken) {
+            if (isset($nodesByToken[$seedToken])) {
+                $tree[] = $buildTree($seedToken);
+            }
+        }
+
+        $data = [
+            'campaign' => $campaign,
+            'tree' => $tree,
+        ];
+
+        return view('admin/analytics/leads', $data);
+    }
 }

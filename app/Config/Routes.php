@@ -44,6 +44,7 @@ $routes->group('admin', ['filter' => 'session'], function ($routes) {
     $routes->get('campaigns/(:segment)/analytics', 'Admin\AnalyticsController::overview/$1');
     $routes->get('campaigns/(:segment)/analytics/graph', 'Admin\AnalyticsController::graph/$1');
     $routes->get('campaigns/(:segment)/analytics/map', 'Admin\AnalyticsController::map/$1');
+    $routes->get('campaigns/(:segment)/analytics/leads', 'Admin\AnalyticsController::leads/$1');
     $routes->get('campaigns/(:segment)/analytics/export', 'Admin\AnalyticsController::export/$1');
 
     // API Admin (JSON para JS)

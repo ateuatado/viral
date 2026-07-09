@@ -45,6 +45,25 @@
     </a>
 </div>
 
+<!-- ── Navigation tabs ────────────────────────────────────────────── -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics" class="btn btn-outline-secondary">
+        <i class="bi bi-bar-chart-line me-1"></i> Visão Geral
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/graph" class="btn btn-outline-secondary">
+        <i class="bi bi-diagram-2 me-1"></i> Grafo Visual
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/map" class="btn btn-primary">
+        <i class="bi bi-map me-1"></i> Mapa de Geolocation
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/leads" class="btn btn-outline-secondary">
+        <i class="bi bi-people me-1"></i> Lista de Leads
+    </a>
+    <a href="/admin/campaigns/<?= esc($campaign['id'] ?? '') ?>/analytics/export" class="btn btn-outline-secondary ms-auto">
+        <i class="bi bi-download me-1"></i> Exportar CSV
+    </a>
+</div>
+
 <!-- ── Map Container ──────────────────────────────────────────────── -->
 <div class="map-wrapper">
     <div id="mapContainer"></div>
