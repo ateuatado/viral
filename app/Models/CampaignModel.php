@@ -24,6 +24,7 @@ class CampaignModel extends Model
     protected $updatedField = 'updated_at';
 
     protected $validationRules = [
+        'id'   => 'permit_empty|alpha_dash|max_length[36]',
         'name' => 'required|min_length[3]|max_length[255]',
         'slug' => 'required|alpha_dash|min_length[3]|max_length[100]|is_unique[campaigns.slug,id,{id}]',
     ];
