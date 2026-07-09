@@ -10,18 +10,19 @@ error_reporting(E_ALL);
 
 // Configuração de caminhos do CodeIgniter 4
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
+chdir(__DIR__);
 
-// Carrega caminhos
-$pathsPath = FCPATH . '../app/Config/Paths.php';
-if (!file_exists($pathsPath)) {
-    die("Erro: Não foi possível encontrar o arquivo Paths.php em: " . $pathsPath);
+// Carregar o Autoloader do Composer
+require FCPATH . '../vendor/autoload.php';
+
+// Definir constante do ambiente
+if (!defined('ENVIRONMENT')) {
+    define('ENVIRONMENT', 'development');
 }
 
-require $pathsPath;
-$paths = new Config\Paths();
-
-// Inicializa o framework
-$bootstrap = require $paths->systemDirectory . '/bootstrap.php';
+// Inicializar o framework CodeIgniter
+$app = \Config\Services::codeigniter();
+$app->initialize();
 
 // Carrega o serviço de e-mail
 $email = \Config\Services::email();
