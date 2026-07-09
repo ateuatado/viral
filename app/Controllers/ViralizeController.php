@@ -59,20 +59,23 @@ class ViralizeController extends BaseController
                         'email'    => $email,
                         'password' => $tempPassword,
                     ]);
-                    $users->save($userEntity);
-
-                    // Add to 'user' group
-                    $newUser = $users->findById($users->getInsertID());
-                    if ($newUser) {
-                        $newUser->addGroup('user');
-                        $newUser->forcePasswordReset();
+                    
+                    if ($users->save($userEntity)) {
+                        // Add to 'user' group
+                        $insertId = $users->getInsertID();
+                        if ($insertId) {
+                            $newUser = $users->findById($insertId);
+                            if ($newUser) {
+                                $newUser->addGroup('user');
+                                $newUser->forcePasswordReset();
+                            }
+                        }
+                    } else {
+                        log_message('error', 'Shield User Validation Failed: ' . json_encode($users->errors()));
                     }
-                } else {
-                    // If user exists, update auth_token but keep existing account
-                    $newUser = $existingUser;
                 }
-            } catch (\Exception $e) {
-                log_message('error', 'Shield User Creation Error: ' . $e->getMessage());
+            } catch (\Throwable $e) {
+                log_message('error', 'Shield User Creation Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             }
         }
 
