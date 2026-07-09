@@ -41,7 +41,7 @@ class MessageController extends BaseController
         $messages = $this->request->getJSON(true);
         if (!is_array($messages)) $messages = [];
 
-        $this->campaignModel->update($campaignId, [
+        $this->campaignModel->skipValidation(true)->update($campaignId, [
             'chat_messages' => $messages,
         ]);
 

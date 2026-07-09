@@ -186,7 +186,7 @@ class CampaignController extends BaseController
             }
         }
 
-        $this->campaignModel->update($id, ['status' => $newStatus]);
+        $this->campaignModel->skipValidation(true)->update($id, ['status' => $newStatus]);
         return redirect()->back()->with('success', 'Status alterado para: ' . $newStatus);
     }
 }
