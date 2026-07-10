@@ -68,7 +68,7 @@ $isExact = static function (string $path) use ($currentUrl): string {
             <div class="user-name"><?= esc(session()->get('user_name') ?? 'Admin') ?></div>
             <div class="user-role">Administrador</div>
         </div>
-        <a href="/admin/logout" class="btn-logout" title="Sair">
+        <a href="/logout" class="btn-logout" title="Sair">
             <i class="bi bi-box-arrow-right"></i>
         </a>
     </div>

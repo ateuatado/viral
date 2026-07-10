@@ -51,7 +51,7 @@
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                    <a class="dropdown-item text-danger" href="/admin/logout">
+                    <a class="dropdown-item text-danger" href="/logout">
                         <i class="bi bi-box-arrow-right me-2"></i> Sair
                     </a>
                 </li>
