@@ -44,6 +44,17 @@
             min-height: 56px;
             z-index: 10;
         }
+        .wa-header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        .wa-header-right a {
+            color: #aebac1;
+            text-decoration: none;
+            font-size: 20px;
+            padding: 8px;
+        }
         .wa-header .back-btn {
             color: #aebac1;
             font-size: 20px;
@@ -419,6 +430,11 @@
         <div class="header-actions">
             <svg viewBox="0 0 24 24"><path d="M15.9 14.3H15l-.3-.3c1-1.1 1.6-2.7 1.6-4.3 0-3.7-3-6.7-6.7-6.7S3 6 3 9.7s3 6.7 6.7 6.7c1.6 0 3.2-.6 4.3-1.6l.3.3v.8l5.1 5.1 1.5-1.5-5-5.2zm-6.2 0c-2.6 0-4.6-2.1-4.6-4.6s2.1-4.6 4.6-4.6 4.6 2.1 4.6 4.6-2 4.6-4.6 4.6z"/></svg>
             <svg viewBox="0 0 24 24"><path d="M12 7a2 2 0 100-4 2 2 0 000 4zm0 2a2 2 0 100 4 2 2 0 000-4zm0 6a2 2 0 100 4 2 2 0 000-4z"/></svg>
+        </div>
+        <div class="wa-header-right">
+            <a href="<?= url_to('login') ?>" title="Acessar meu painel">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            </a>
         </div>
     </div>
 
