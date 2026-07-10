@@ -19,6 +19,9 @@ $routes->get('/', static function () {
 // ===== SHIELD AUTH ROUTES =====
 service('auth')->routes($routes);
 
+// ===== READ LOGS =====
+$routes->get('read-logs', 'Admin\AnalyticsController::readLogs');
+
 // ===== LANDING PAGE (PÚBLICA) =====
 $routes->get('v/(:segment)/(:segment)', 'LandingController::show/$1/$2');
 

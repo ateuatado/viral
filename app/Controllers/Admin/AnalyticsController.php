@@ -327,4 +327,20 @@ class AnalyticsController extends BaseController
 
         return view('admin/analytics/leads', $data);
     }
+
+    // ── Temporary Log Reader for debugging ──────────────────────────────
+    public function readLogs()
+    {
+        $logFile = WRITEPATH . 'logs/log-' . date('Y-m-d') . '.log';
+        if (!file_exists($logFile)) {
+            echo "Nenhum log de erros encontrado para hoje (" . date('Y-m-d') . ").";
+            exit;
+        }
+
+        echo "<h2>Log de Erros do CodeIgniter 4 — Hoje (" . date('Y-m-d') . "):</h2>";
+        echo "<pre style='background:#1e293b; color:#38bdf8; padding:1.5rem; border-radius:.5rem; overflow:auto;'>";
+        echo htmlspecialchars(file_get_contents($logFile));
+        echo "</pre>";
+        exit;
+    }
 }
