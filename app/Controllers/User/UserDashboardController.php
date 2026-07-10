@@ -84,7 +84,7 @@ class UserDashboardController extends BaseController
                                   ->countAllResults();
 
         // Desconto conquistado
-        $maxDepth = $propagatorModel->calculateMaxDepthBelow($propagator['token']);
+        $maxDepth = $propagatorModel->calculateMaxDepthBelow($propagator['token'], $propagator['campaign_id']);
         $discount = min($maxDepth * 10, 80);
 
         // Conversões e visualizadores diretos
@@ -181,7 +181,7 @@ class UserDashboardController extends BaseController
             }
 
             // Calcula o desconto desse nó na árvore dele
-            $nodeMaxDepth = $propagatorModel->calculateMaxDepthBelow($token);
+            $nodeMaxDepth = $propagatorModel->calculateMaxDepthBelow($token, $currentUser['campaign_id']);
             $nodeDiscount = min($nodeMaxDepth * 10, 80);
 
             $nodes[] = [
