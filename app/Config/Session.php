@@ -58,7 +58,7 @@ class Session extends BaseConfig
      *
      * IMPORTANT: You are REQUIRED to set a valid save path!
      */
-    public string $savePath = WRITEPATH . 'session';
+    public string $savePath = __DIR__ . '/../../writable/session';
 
     /**
      * --------------------------------------------------------------------------
