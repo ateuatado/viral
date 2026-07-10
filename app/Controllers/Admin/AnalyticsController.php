@@ -337,9 +337,12 @@ class AnalyticsController extends BaseController
             exit;
         }
 
-        echo "<h2>Log de Erros do CodeIgniter 4 — Hoje (" . date('Y-m-d') . "):</h2>";
-        echo "<pre style='background:#1e293b; color:#38bdf8; padding:1.5rem; border-radius:.5rem; overflow:auto;'>";
-        echo htmlspecialchars(file_get_contents($logFile));
+        $lines = file($logFile);
+        $lastLines = array_slice($lines, -100);
+
+        echo "<h2>Log de Erros do CodeIgniter 4 — Últimas 100 linhas de Hoje (" . date('Y-m-d') . "):</h2>";
+        echo "<pre style='background:#1e293b; color:#38bdf8; padding:1.5rem; border-radius:.5rem; overflow:auto; font-size:12px; line-height:1.5;'>";
+        echo htmlspecialchars(implode("", $lastLines));
         echo "</pre>";
         exit;
     }
