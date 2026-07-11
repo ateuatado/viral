@@ -471,6 +471,8 @@ const VIRAL_CONFIG = {
     successMessage: <?= json_encode($campaign['success_message'] ?? '') ?>,
     successTitle: <?= json_encode($campaign['success_title'] ?? '') ?>,
     ownerMessage: <?= json_encode($campaign['owner_message'] ?? '') ?>,
+    ownerMetaMessage: <?= json_encode($campaign['owner_meta_message'] ?? '') ?>,
+    ownerMaxMessage: <?= json_encode($campaign['owner_max_message'] ?? '') ?>,
     csrfName: <?= json_encode($csrfName) ?>,
     csrfHash: <?= json_encode($csrfHash) ?>,
     baseUrl: <?= json_encode(base_url()) ?>,
@@ -963,17 +965,33 @@ const VIRAL_CONFIG = {
 
         let progressHtml = '';
         if (C.parentDiscount < 80) {
-            progressHtml = `
-            <div style="background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#8696a0;">
-                <div style="color:#22c55e; font-weight:600; font-size:14px; margin-bottom:8px;">🎯 Próxima Meta:</div>
-                Se o seu amigo que você indicou compartilhar com outra pessoa, seu desconto sobe para <strong style="color:#e9edef;">${nextDiscount}%</strong>!<br>
-                <span style="font-size:11px; color:#64748b;">(Meta atual: nível ${nextDepth} de profundidade na sua rede).</span>
-            </div>`;
+            if (C.ownerMetaMessage) {
+                let metaMsg = C.ownerMetaMessage;
+                metaMsg = metaMsg.replace(/\{proximo_desconto\}/g, nextDiscount);
+                metaMsg = metaMsg.replace(/\{proxima_profundidade\}/g, nextDepth);
+                progressHtml = `
+                <div style="background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#8696a0;">
+                    <div style="color:#22c55e; font-weight:600; font-size:14px; margin-bottom:8px;">🎯 Próxima Meta:</div>
+                    <div style="white-space:pre-wrap;">${escapeHtml(metaMsg)}</div>
+                </div>`;
+            } else {
+                progressHtml = `
+                <div style="background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#8696a0;">
+                    <div style="color:#22c55e; font-weight:600; font-size:14px; margin-bottom:8px;">🎯 Próxima Meta:</div>
+                    Se o seu amigo que você indicou compartilhar com outra pessoa, seu desconto sobe para <strong style="color:#e9edef;">${nextDiscount}%</strong>!<br>
+                    <span style="font-size:11px; color:#64748b;">(Meta atual: nível ${nextDepth} de profundidade na sua rede).</span>
+                </div>`;
+            }
         } else {
-            progressHtml = `
-            <div style="background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.2); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#22c55e;">
-                🏆 <strong>Parabéns!</strong> Você atingiu a profundidade máxima e conquistou o desconto limite de <strong>80%</strong>!
-            </div>`;
+            if (C.ownerMaxMessage) {
+                progressHtml = `
+                <div style="background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.2); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#22c55e; white-space:pre-wrap;">${escapeHtml(C.ownerMaxMessage)}</div>`;
+            } else {
+                progressHtml = `
+                <div style="background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.2); border-radius:12px; padding:16px; margin: 20px 0; text-align:left; font-size:13px; line-height:1.6; color:#22c55e;">
+                    🏆 <strong>Parabéns!</strong> Você atingiu a profundidade máxima e conquistou o desconto limite de <strong>80%</strong>!
+                </div>`;
+            }
         }
 
         const shareUrl = C.baseUrl + 'v/' + C.campaignSlug + '/' + C.parentToken;

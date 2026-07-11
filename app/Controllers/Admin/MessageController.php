@@ -43,12 +43,14 @@ class MessageController extends BaseController
         if (!is_array($chatMessages)) $chatMessages = [];
 
         $this->campaignModel->skipValidation(true)->update($campaignId, [
-            'chat_messages'   => $chatMessages,
-            'success_title'   => $payload['success_title'] ?? '',
-            'success_message' => $payload['success_message'] ?? '',
-            'owner_message'   => $payload['owner_message'] ?? '',
-            'email_subject'   => $payload['email_subject'] ?? '',
-            'email_body'      => $payload['email_body'] ?? '',
+            'chat_messages'       => $chatMessages,
+            'success_title'       => $payload['success_title'] ?? '',
+            'success_message'     => $payload['success_message'] ?? '',
+            'owner_message'       => $payload['owner_message'] ?? '',
+            'owner_meta_message'  => $payload['owner_meta_message'] ?? '',
+            'owner_max_message'   => $payload['owner_max_message'] ?? '',
+            'email_subject'       => $payload['email_subject'] ?? '',
+            'email_body'          => $payload['email_body'] ?? '',
         ]);
 
         return $this->response->setJSON(['success' => true, 'message' => 'Mensagens salvas!']);

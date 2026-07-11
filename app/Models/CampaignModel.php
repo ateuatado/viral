@@ -18,6 +18,7 @@ class CampaignModel extends Model
         'og_title', 'og_description', 'og_image',
         'contact_name', 'contact_avatar', 'chat_messages', 'success_message',
         'success_title', 'email_subject', 'email_body', 'owner_message',
+        'owner_meta_message', 'owner_max_message',
         'created_at', 'updated_at', 'expires_at',
     ];
     protected $useTimestamps = true;

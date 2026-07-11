@@ -285,11 +285,28 @@
                         </div>
                         <div class="col-12 mb-3">
                             <label for="owner_message" class="form-label text-white fw-bold">Mensagem do Dashboard do Lead</label>
-                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_message" name="owner_message" rows="3"
+                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_message" name="owner_message" rows="2"
                                       placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= esc($campaign['owner_message'] ?? '') ?></textarea>
                             <div class="form-text text-muted">
                                 <strong>Onde aparece:</strong> Fica logo abaixo do cumprimento ("👋 Olá, [Nome]!") na tela de acompanhamento de quem indicou.<br>
-                                💡 Suporta as variáveis: <code>{nome}</code> (nome do lead), <code>{desconto}</code> (percentual atual de desconto, ex: 30%) e <code>{niveis}</code> (número de níveis ativos).
+                                💡 Suporta as variáveis: <code>{nome}</code>, <code>{desconto}</code> e <code>{niveis}</code>.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="owner_meta_message" class="form-label text-white fw-bold">Mensagem de Próxima Meta</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_meta_message" name="owner_meta_message" rows="3"
+                                      placeholder="Se o seu amigo que você indicou compartilhar com outra pessoa, seu desconto sobe para {proximo_desconto}%!&#10;(Meta atual: nível {proxima_profundidade} de profundidade na sua rede)."><?= esc($campaign['owner_meta_message'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">
+                                <strong>Onde aparece:</strong> Caixa de progresso quando o lead AINDA NÃO atingiu o limite de desconto.<br>
+                                💡 Suporta: <code>{proximo_desconto}</code> e <code>{proxima_profundidade}</code>.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="owner_max_message" class="form-label text-white fw-bold">Mensagem de Meta Máxima</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_max_message" name="owner_max_message" rows="3"
+                                      placeholder="🏆 Parabéns! Você atingiu a profundidade máxima e conquistou o desconto limite de 80%!"><?= esc($campaign['owner_max_message'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">
+                                <strong>Onde aparece:</strong> Caixa de parabéns verde exibida quando o lead ATINGIU o desconto máximo (80%).
                             </div>
                         </div>
                     </div>
@@ -580,6 +597,8 @@
             success_title: document.getElementById('success_title').value,
             success_message: document.getElementById('success_message').value,
             owner_message: document.getElementById('owner_message').value,
+            owner_meta_message: document.getElementById('owner_meta_message').value,
+            owner_max_message: document.getElementById('owner_max_message').value,
             email_subject: document.getElementById('email_subject').value,
             email_body: document.getElementById('email_body').value,
         };
