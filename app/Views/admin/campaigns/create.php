@@ -207,11 +207,47 @@
                         <div class="col-12">
                             <label for="success_message" class="form-label">Mensagem exibida após compartilhamento</label>
                             <textarea class="form-control" id="success_message" name="success_message"
-                                      rows="4" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= old('success_message') ?></textarea>
-                            <div class="form-text">
+                                      rows="3" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= old('success_message') ?></textarea>
+                            <div class="form-text mb-3">
                                 Texto exibido ao visitante depois que ele compartilha e ganha o cupom.
                                 Use <code>{nome}</code> para inserir o nome do visitante.
                                 Se vazio, usará a mensagem padrão do sistema.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="success_title" class="form-label">Título da Mensagem de Sucesso (Chat)</label>
+                            <input type="text" class="form-control" id="success_title" name="success_title"
+                                   placeholder="🎯 Você entrou na Corrida de Cupons!" value="<?= old('success_title') ?>">
+                            <div class="form-text">Título em destaque exibido no card final do chat.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="owner_message" class="form-label">Mensagem para o Proprietário do Link (Dono)</label>
+                            <textarea class="form-control" id="owner_message" name="owner_message" rows="2"
+                                      placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= old('owner_message') ?></textarea>
+                            <div class="form-text">Mensagem exibida ao dono. Use <code>{nome}</code>, <code>{desconto}</code>, <code>{niveis}</code>.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="border-secondary">
+                            <h6 class="text-secondary mb-3">Configurações de E-mail de Boas-Vindas</h6>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="email_subject" class="form-label">Assunto do E-mail</label>
+                            <input type="text" class="form-control" id="email_subject" name="email_subject"
+                                   placeholder="🎯 Corrida de Cupons: Seu link de desconto está ativo!" value="<?= old('email_subject') ?>">
+                            <div class="form-text">Assunto do e-mail. Placeholders: <code>{nome}</code>, <code>{campanha}</code>.</div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="email_body" class="form-label">Corpo do E-mail (HTML/Texto)</label>
+                            <textarea class="form-control" id="email_body" name="email_body" rows="6"
+                                      placeholder="Escreva a mensagem HTML..."><?= old('email_body') ?></textarea>
+                            <div class="form-text">
+                                Corpo da mensagem. Suporta tags HTML. 
+                                Placeholders: <code>{nome}</code>, <code>{campanha}</code>, <code>{senha_temporaria}</code>, <code>{link_acesso}</code>, <code>{link_compartilhamento}</code>.
                             </div>
                         </div>
                     </div>

@@ -106,62 +106,83 @@ class ViralizeController extends BaseController
                 $emailService->setTo($email);
                 
                 $campaignName = $campaign['name'] ?? 'Campanha';
-                $emailService->setSubject('🎯 Corrida de Cupons: Seu link de desconto está ativo!');
                 
-                $message = "
-                <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;'>
-                    <h2 style='color: #0f172a; margin-top: 0;'>Olá, " . htmlspecialchars($name) . "!</h2>
-                    <p style='font-size: 15px; line-height: 1.6; color: #475569;'>
-                        Você se cadastrou com sucesso na Corrida de Cupons da campanha <strong>" . htmlspecialchars($campaignName) . "</strong>!
-                    </p>
+                $subject = !empty($campaign['email_subject']) ? $campaign['email_subject'] : '🎯 Corrida de Cupons: Seu link de desconto está ativo!';
+                $subject = str_replace('{nome}', $name, $subject);
+                $subject = str_replace('{campanha}', $campaignName, $subject);
+                $emailService->setSubject($subject);
+                
+                if (!empty($campaign['email_body'])) {
+                    $body = $campaign['email_body'];
+                    $body = str_replace('{nome}', htmlspecialchars($name), $body);
+                    $body = str_replace('{senha_temporaria}', htmlspecialchars($tempPassword), $body);
+                    $body = str_replace('{link_acesso}', htmlspecialchars($loginUrl), $body);
+                    $body = str_replace('{link_compartilhamento}', htmlspecialchars($shareUrl), $body);
+                    $body = str_replace('{campanha}', htmlspecialchars($campaignName), $body);
                     
-                    <div style='background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin: 20px 0;'>
-                        <p style='margin: 0; font-size: 14px; font-weight: bold; color: #0f172a;'>
-                            🎁 Desconto Inicial Conquistado: 10% OFF
+                    if (strip_tags($body) === $body) {
+                        $body = nl2br($body);
+                    }
+                    $message = "
+                    <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;'>
+                        " . $body . "
+                    </div>";
+                } else {
+                    $message = "
+                    <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff; color: #334155;'>
+                        <h2 style='color: #0f172a; margin-top: 0;'>Olá, " . htmlspecialchars($name) . "!</h2>
+                        <p style='font-size: 15px; line-height: 1.6; color: #475569;'>
+                            Você se cadastrou com sucesso na Corrida de Cupons da campanha <strong>" . htmlspecialchars($campaignName) . "</strong>!
                         </p>
-                        <p style='margin: 8px 0 0 0; font-size: 13px; color: #64748b; line-height: 1.5;'>
-                            Seu desconto de 10% já está reservado. A cada amigo que entrar pelo seu link e indicar outra pessoa, o seu desconto sobe mais 10% (limite de 80%!).
-                        </p>
-                    </div>
+                        
+                        <div style='background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin: 20px 0;'>
+                            <p style='margin: 0; font-size: 14px; font-weight: bold; color: #0f172a;'>
+                                🎁 Desconto Inicial Conquistado: 10% OFF
+                            </p>
+                            <p style='margin: 8px 0 0 0; font-size: 13px; color: #64748b; line-height: 1.5;'>
+                                Seu desconto de 10% já está reservado. A cada amigo que entrar pelo seu link e indicar outra pessoa, o seu desconto sobe mais 10% (limite de 80%!).
+                            </p>
+                        </div>
 
-                    <div style='background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin: 20px 0;'>
-                        <p style='margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #0f172a;'>
-                            🔑 Acesso ao Painel Exclusivo de Leads
+                        <div style='background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px; margin: 20px 0;'>
+                            <p style='margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #0f172a;'>
+                                🔑 Acesso ao Painel Exclusivo de Leads
+                            </p>
+                            <p style='margin: 0 0 12px 0; font-size: 13px; color: #64748b; line-height: 1.5;'>
+                                Criamos uma conta de usuário para você poder acompanhar quem entrou na sua rede em tempo real em um Grafo interativo sem expor nomes de terceiros. Acesse pelo botão de login rápido abaixo:
+                            </p>
+                            <div style='text-align: center; margin: 15px 0;'>
+                                <a href='" . htmlspecialchars($loginUrl) . "' style='background-color: #0f172a; color: #ffffff; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 14px; display: inline-block;'>
+                                    Entrar no Painel e Definir Senha
+                                </a>
+                            </div>
+                            <p style='margin: 12px 0 0 0; font-size: 12px; color: #94a3b8;'>
+                                E-mail de acesso: <strong>" . htmlspecialchars($email) . "</strong><br>
+                                Senha temporária: <code style='background: #e2e8f0; padding: 2px 4px; border-radius: 3px; color: #475569;'>" . htmlspecialchars($tempPassword) . "</code>
+                            </p>
+                        </div>
+                        
+                        <p style='font-size: 15px; line-height: 1.6; color: #475569;'>
+                            Use o link abaixo para compartilhar diretamente com seus amigos e subir o seu desconto:
                         </p>
-                        <p style='margin: 0 0 12px 0; font-size: 13px; color: #64748b; line-height: 1.5;'>
-                            Criamos uma conta de usuário para você poder acompanhar quem entrou na sua rede em tempo real em um Grafo interativo sem expor nomes de terceiros. Acesse pelo botão de login rápido abaixo:
-                        </p>
-                        <div style='text-align: center; margin: 15px 0;'>
-                            <a href='" . htmlspecialchars($loginUrl) . "' style='background-color: #0f172a; color: #ffffff; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 14px; display: inline-block;'>
-                                Entrar no Painel e Definir Senha
+                        
+                        <div style='text-align: center; margin: 30px 0;'>
+                            <a href='" . htmlspecialchars($shareUrl) . "' style='background-color: #22c55e; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 15px; display: inline-block;'>
+                                Compartilhar Link do WhatsApp
                             </a>
                         </div>
-                        <p style='margin: 12px 0 0 0; font-size: 12px; color: #94a3b8;'>
-                            E-mail de acesso: <strong>" . htmlspecialchars($email) . "</strong><br>
-                            Senha temporária: <code style='background: #e2e8f0; padding: 2px 4px; border-radius: 3px; color: #475569;'>" . htmlspecialchars($tempPassword) . "</code>
+                        
+                        <p style='font-size: 13px; color: #64748b; line-height: 1.5;'>
+                            Link de indicação exclusivo:<br>
+                            <code style='background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 13px; word-break: break-all; display: inline-block; margin-top: 6px;'>" . htmlspecialchars($shareUrl) . "</code>
                         </p>
-                    </div>
-                    
-                    <p style='font-size: 15px; line-height: 1.6; color: #475569;'>
-                        Use o link abaixo para compartilhar diretamente com seus amigos e subir o seu desconto:
-                    </p>
-                    
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='" . htmlspecialchars($shareUrl) . "' style='background-color: #22c55e; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 15px; display: inline-block;'>
-                            Compartilhar Link do WhatsApp
-                        </a>
-                    </div>
-                    
-                    <p style='font-size: 13px; color: #64748b; line-height: 1.5;'>
-                        Link de indicação exclusivo:<br>
-                        <code style='background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 13px; word-break: break-all; display: inline-block; margin-top: 6px;'>" . htmlspecialchars($shareUrl) . "</code>
-                    </p>
-                    
-                    <hr style='border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;'>
-                    <p style='font-size: 11px; color: #94a3b8; text-align: center; margin: 0;'>
-                        Este é um e-mail transacional automático do Studio James Webb. Não é necessário respondê-lo.
-                    </p>
-                </div>";
+                        
+                        <hr style='border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;'>
+                        <p style='font-size: 11px; color: #94a3b8; text-align: center; margin: 0;'>
+                            Este é um e-mail transacional automático do Studio James Webb. Não é necessário respondê-lo.
+                        </p>
+                    </div>";
+                }
                 
                 $emailService->setMessage($message);
                 $emailService->send();

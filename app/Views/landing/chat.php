@@ -469,6 +469,8 @@ const VIRAL_CONFIG = {
     offerLinkText: <?= json_encode($campaign['offer_link_text'] ?? '') ?>,
     offerCtaText: <?= json_encode($campaign['offer_cta_text'] ?? 'Compartilhe e ganhe!') ?>,
     successMessage: <?= json_encode($campaign['success_message'] ?? '') ?>,
+    successTitle: <?= json_encode($campaign['success_title'] ?? '') ?>,
+    ownerMessage: <?= json_encode($campaign['owner_message'] ?? '') ?>,
     csrfName: <?= json_encode($csrfName) ?>,
     csrfHash: <?= json_encode($csrfHash) ?>,
     baseUrl: <?= json_encode(base_url()) ?>,
@@ -905,7 +907,7 @@ const VIRAL_CONFIG = {
 
         if (sharePanel) {
             sharePanel.innerHTML = `
-                <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
+                <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">${escapeHtml(C.successTitle || '🎯 Você entrou na Corrida de Cupons!')}</div>
                 ${successHtml}
                 <div class="share-link-box">
                     <input type="text" id="shareLinkInput" value="${escapeHtml(url)}" readonly>
@@ -945,6 +947,20 @@ const VIRAL_CONFIG = {
         const nextDiscount = Math.min(80, nextDepth * 10);
         const percentText = C.parentDiscount > 0 ? `${C.parentDiscount}% de desconto!` : 'nenhum desconto ainda.';
 
+        let ownerHtml = '';
+        if (C.ownerMessage) {
+            let msg = C.ownerMessage;
+            msg = msg.replace(/\{nome\}/g, C.parentName);
+            msg = msg.replace(/\{desconto\}/g, percentText);
+            msg = msg.replace(/\{niveis\}/g, C.parentMaxDepth);
+            ownerHtml = `<div style="font-size: 13px; color: #8696a0; margin-bottom: 20px; text-align: left; line-height: 1.5; white-space: pre-wrap;">${escapeHtml(msg)}</div>`;
+        } else {
+            ownerHtml = `
+            <div style="font-size: 14px; color: #8696a0; margin-bottom: 20px;">
+                Você conquistou acumulado <strong style="color:#22c55e; font-size:16px;">${percentText}</strong>
+            </div>`;
+        }
+
         let progressHtml = '';
         if (C.parentDiscount < 80) {
             progressHtml = `
@@ -967,9 +983,7 @@ const VIRAL_CONFIG = {
                 <div class="drag-handle" id="dragHandle"></div>
                 <div class="share-panel visible">
                     <div class="share-title" style="margin-bottom: 8px;">👋 Olá, ${escapeHtml(C.parentName)}!</div>
-                    <div style="font-size: 14px; color: #8696a0; margin-bottom: 20px;">
-                        Você conquistou acumulado <strong style="color:#22c55e; font-size:16px;">${percentText}</strong>
-                    </div>
+                    ${ownerHtml}
                     <div style="text-align: left; font-size:13px; color:#8696a0; margin-bottom: 12px;">
                         🔑 Níveis ativos na sua rede: <strong>${C.parentMaxDepth}</strong>
                     </div>
