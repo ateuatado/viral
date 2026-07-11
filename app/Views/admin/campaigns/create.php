@@ -162,6 +162,12 @@
                                    value="<?= old('offer_cta_text', 'Compartilhe e ganhe!') ?>"
                                    placeholder="Compartilhe e ganhe!">
                         </div>
+                        <div class="col-12" id="offerImageField" style="display:none;">
+                            <label for="offer_image" class="form-label">Imagem da Oferta</label>
+                            <input type="file" class="form-control" id="offer_image" name="offer_image"
+                                   accept="image/*">
+                            <div class="form-text">Formatos: JPG, PNG, WebP. Tamanho recomendado: 800×600 px, máx 300 KB.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -230,5 +236,14 @@
             .replace(/^-+|-+$/g, '');
         slugInput.value = slug;
     });
+
+    // Show/hide offer image field based on type
+    const offerType = document.getElementById('offer_type');
+    const offerImageField = document.getElementById('offerImageField');
+    function toggleOfferImage() {
+        offerImageField.style.display = offerType.value === 'image' ? 'block' : 'none';
+    }
+    offerType.addEventListener('change', toggleOfferImage);
+    toggleOfferImage();
 </script>
 <?= $this->endSection() ?>

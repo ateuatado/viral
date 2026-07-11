@@ -244,6 +244,23 @@
                             <input type="text" class="form-control" id="offer_cta_text" name="offer_cta_text"
                                    value="<?= old('offer_cta_text', esc($campaign['offer_cta_text'] ?? 'Compartilhe e ganhe!')) ?>">
                         </div>
+                        <div class="col-12" id="offerImageField" style="display:none;">
+                            <label for="offer_image" class="form-label">Imagem da Oferta</label>
+                            <input type="file" class="form-control" id="offer_image" name="offer_image"
+                                   accept="image/*">
+                            <?php if (!empty($campaign['offer_image'])): ?>
+                                <div class="form-text">
+                                    Atual: <img src="<?= esc($campaign['offer_image']) ?>" alt="oferta"
+                                               class="rounded" width="80" height="50" style="object-fit:cover">
+                                    <span class="ms-1"><?= basename($campaign['offer_image']) ?></span>
+                                    <label class="ms-3 text-warning">
+                                        <input type="checkbox" name="remove_offer_image" value="1">
+                                        Remover imagem
+                                    </label>
+                                </div>
+                            <?php endif; ?>
+                            <div class="form-text">Formatos: JPG, PNG, WebP. Tamanho recomendado: 800×600 px, máx 300 KB.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -308,5 +325,14 @@
             });
         });
     }
+
+    // Show/hide offer image field based on type
+    const offerType = document.getElementById('offer_type');
+    const offerImageField = document.getElementById('offerImageField');
+    function toggleOfferImage() {
+        offerImageField.style.display = offerType.value === 'image' ? 'block' : 'none';
+    }
+    offerType.addEventListener('change', toggleOfferImage);
+    toggleOfferImage();
 </script>
 <?= $this->endSection() ?>

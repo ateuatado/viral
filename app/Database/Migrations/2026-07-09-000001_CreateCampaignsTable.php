@@ -19,7 +19,7 @@ class CreateCampaignsTable extends Migration
             'status' => ['type' => 'ENUM', 'constraint' => ['draft', 'active', 'paused', 'ended'], 'default' => 'draft'],
             'config_geoloc' => ['type' => 'BOOLEAN', 'default' => false],
             'config_geoloc_mode' => ['type' => 'ENUM', 'constraint' => ['explicit', 'silent'], 'default' => 'explicit'],
-            'offer_type' => ['type' => 'ENUM', 'constraint' => ['text', 'image', 'link', 'none'], 'default' => 'text'],
+            'offer_type' => ['type' => 'ENUM', 'constraint' => ['text', 'image', 'video', 'link', 'none'], 'default' => 'text'],
             'offer_title' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
             'offer_body' => ['type' => 'TEXT', 'null' => true],
             'offer_image' => ['type' => 'VARCHAR', 'constraint' => 500, 'null' => true],

@@ -43,6 +43,8 @@ class CampaignController extends BaseController
 
     public function store()
     {
+        helper('viral');
+
         $data = [
             'id' => generate_uuid(),
             'name' => $this->request->getPost('name'),
@@ -55,6 +57,7 @@ class CampaignController extends BaseController
             'offer_type' => $this->request->getPost('offer_type') ?: 'text',
             'offer_title' => $this->request->getPost('offer_title'),
             'offer_body' => $this->request->getPost('offer_body'),
+            'offer_image' => null,
             'offer_link_url' => $this->request->getPost('offer_link_url'),
             'offer_link_text' => $this->request->getPost('offer_link_text'),
             'offer_cta_text' => $this->request->getPost('offer_cta_text') ?: 'Compartilhe e ganhe!',
@@ -66,24 +69,40 @@ class CampaignController extends BaseController
             'structure' => [],
         ];
 
-        // Handle OG image upload
+        $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $data['id'];
+
+        // Handle OG image upload (optimize)
         $ogImage = $this->request->getFile('og_image');
         if ($ogImage && $ogImage->isValid() && !$ogImage->hasMoved()) {
-            $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $data['id'];
             if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
-            $newName = 'og_' . $ogImage->getRandomName();
-            $ogImage->move($campaignDir, $newName);
-            $data['og_image'] = '/assets/uploads/campaigns/' . $data['id'] . '/' . $newName;
+            $tempName = $ogImage->getRandomName();
+            $tempPath = $campaignDir . '/' . $tempName;
+            $ogImage->move($campaignDir, $tempName);
+
+            $optName = optimize_image($tempPath, $campaignDir, 'og_');
+            if ($optName) {
+                $data['og_image'] = '/assets/uploads/campaigns/' . $data['id'] . '/' . $optName;
+            } else {
+                $data['og_image'] = '/assets/uploads/campaigns/' . $data['id'] . '/' . $tempName;
+            }
         }
 
         // Handle contact avatar upload
         $avatar = $this->request->getFile('contact_avatar');
         if ($avatar && $avatar->isValid() && !$avatar->hasMoved()) {
-            $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $data['id'];
             if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
             $newName = 'avatar_' . $avatar->getRandomName();
             $avatar->move($campaignDir, $newName);
             $data['contact_avatar'] = '/assets/uploads/campaigns/' . $data['id'] . '/' . $newName;
+        }
+
+        // Handle offer image upload
+        $offerImage = $this->request->getFile('offer_image');
+        if ($offerImage && $offerImage->isValid() && !$offerImage->hasMoved()) {
+            if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
+            $newName = 'offer_' . $offerImage->getRandomName();
+            $offerImage->move($campaignDir, $newName);
+            $data['offer_image'] = '/assets/uploads/campaigns/' . $data['id'] . '/' . $newName;
         }
 
         if (!$this->campaignModel->insert($data)) {
@@ -115,6 +134,8 @@ class CampaignController extends BaseController
 
     public function update(string $id)
     {
+        helper('viral');
+
         $campaign = $this->campaignModel->find($id);
         if (!$campaign) return redirect()->to('/admin/campaigns')->with('error', 'Campanha não encontrada.');
 
@@ -137,24 +158,45 @@ class CampaignController extends BaseController
             'contact_name' => $this->request->getPost('contact_name'),
         ];
 
-        // Handle OG image upload
+        $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $id;
+
+        // Handle OG image upload (optimize)
         $ogImage = $this->request->getFile('og_image');
         if ($ogImage && $ogImage->isValid() && !$ogImage->hasMoved()) {
-            $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $id;
             if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
-            $newName = 'og_' . $ogImage->getRandomName();
-            $ogImage->move($campaignDir, $newName);
-            $data['og_image'] = '/assets/uploads/campaigns/' . $id . '/' . $newName;
+            $tempName = $ogImage->getRandomName();
+            $tempPath = $campaignDir . '/' . $tempName;
+            $ogImage->move($campaignDir, $tempName);
+
+            $optName = optimize_image($tempPath, $campaignDir, 'og_');
+            if ($optName) {
+                $data['og_image'] = '/assets/uploads/campaigns/' . $id . '/' . $optName;
+            } else {
+                $data['og_image'] = '/assets/uploads/campaigns/' . $id . '/' . $tempName;
+            }
         }
 
         // Handle contact avatar upload
         $avatar = $this->request->getFile('contact_avatar');
         if ($avatar && $avatar->isValid() && !$avatar->hasMoved()) {
-            $campaignDir = FCPATH . 'assets/uploads/campaigns/' . $id;
             if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
             $newName = 'avatar_' . $avatar->getRandomName();
             $avatar->move($campaignDir, $newName);
             $data['contact_avatar'] = '/assets/uploads/campaigns/' . $id . '/' . $newName;
+        }
+
+        // Handle offer image upload
+        $offerImage = $this->request->getFile('offer_image');
+        if ($offerImage && $offerImage->isValid() && !$offerImage->hasMoved()) {
+            if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
+            $newName = 'offer_' . $offerImage->getRandomName();
+            $offerImage->move($campaignDir, $newName);
+            $data['offer_image'] = '/assets/uploads/campaigns/' . $id . '/' . $newName;
+        }
+
+        // Handle remove offer image
+        if ($this->request->getPost('remove_offer_image')) {
+            $data['offer_image'] = null;
         }
 
         $history = $campaign['history'] ?? [];

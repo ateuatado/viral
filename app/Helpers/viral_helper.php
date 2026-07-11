@@ -40,3 +40,65 @@ if (!function_exists('format_datetime_br')) {
         return date('d/m/Y H:i', strtotime($datetime));
     }
 }
+
+if (!function_exists('optimize_image')) {
+    /**
+     * Redimensiona e comprime uma imagem para OG/thumbnail.
+     * Retorna o nome do novo arquivo ou false em caso de erro.
+     */
+    function optimize_image(string $sourcePath, string $destDir, string $prefix = 'opt_', int $maxWidth = 1200, int $maxHeight = 628, int $quality = 80): ?string
+    {
+        if (!file_exists($sourcePath)) return null;
+
+        $info = getimagesize($sourcePath);
+        if (!$info) return null;
+
+        [$origW, $origH, $type] = $info;
+
+        // Supported types
+        $srcImg = null;
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $srcImg = @imagecreatefromjpeg($sourcePath);
+                break;
+            case IMAGETYPE_PNG:
+                $srcImg = @imagecreatefrompng($sourcePath);
+                break;
+            case IMAGETYPE_WEBP:
+                $srcImg = @imagecreatefromwebp($sourcePath);
+                break;
+            default:
+                return null; // unsupported format, keep original
+        }
+
+        if (!$srcImg) return null;
+
+        // Calculate new dimensions (fit within bounds, preserve aspect ratio)
+        $ratio = min($maxWidth / $origW, $maxHeight / $origH, 1);
+        $newW = (int)round($origW * $ratio);
+        $newH = (int)round($origH * $ratio);
+
+        $dstImg = imagecreatetruecolor($newW, $newH);
+        imagecopyresampled($dstImg, $srcImg, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+
+        // Generate unique filename
+        $ext = 'jpg';
+        $newName = $prefix . bin2hex(random_bytes(8)) . '.' . $ext;
+        $destPath = rtrim($destDir, '/\\') . DIRECTORY_SEPARATOR . $newName;
+
+        // Save as JPEG (universal, smaller)
+        $success = imagejpeg($dstImg, $destPath, $quality);
+
+        imagedestroy($srcImg);
+        imagedestroy($dstImg);
+
+        if (!$success) return null;
+
+        // Delete original if it's not the same as destination
+        if (realpath($sourcePath) !== realpath($destPath)) {
+            @unlink($sourcePath);
+        }
+
+        return $newName;
+    }
+}
