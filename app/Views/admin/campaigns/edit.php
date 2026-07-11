@@ -39,6 +39,9 @@
         <a href="/admin/campaigns" class="btn btn-outline-light btn-sm">
             <i class="bi bi-arrow-left me-1"></i> Voltar
         </a>
+        <a href="/admin/campaigns/<?= esc($campaign['id']) ?>/messages" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-chat-dots me-1"></i> Editar Mensagens
+        </a>
         <form action="/admin/campaigns/<?= esc($campaign['id']) ?>/toggle-status" method="post" class="d-inline">
             <?= csrf_field() ?>
             <button type="submit" class="btn btn-outline-<?= $campaign['status'] === 'active' ? 'warning' : 'success' ?> btn-sm">
