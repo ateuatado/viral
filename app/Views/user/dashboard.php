@@ -299,7 +299,11 @@
                     <div class="glass-card coupon-box">
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 mb-3">Seu Cupom</span>
                         <div class="coupon-discount"><?= $discount ?>% OFF</div>
-                        <p class="text-muted mb-0">desconto acumulado na sua rede</p>
+                        <p class="text-muted mb-2">desconto acumulado na sua rede</p>
+                        
+                        <p class="text-secondary small mb-3" style="font-size: 11px; line-height: 1.4;">
+                            ℹ️ <strong>Como funciona:</strong> Você inicia com 10% OFF. A cada amigo indicado que convidar outra pessoa (gerando profundidade na rede), o seu desconto sobe mais 10% (limite de 80%).
+                        </p>
                         
                         <!-- Barra de progresso -->
                         <div class="progress-bar-custom">
@@ -320,22 +324,35 @@
                     <!-- Grid de Estatísticas -->
                     <div class="row g-3">
                         <div class="col-6">
-                            <div class="glass-card stat-card">
-                                <div class="stat-number"><?= $clicks ?></div>
-                                <div class="stat-label">Cliques</div>
+                            <div class="glass-card stat-card d-flex flex-column justify-content-between h-100 py-3">
+                                <div>
+                                    <div class="stat-number"><?= $clicks ?></div>
+                                    <div class="stat-label">Cliques</div>
+                                </div>
+                                <p class="text-muted small mb-0 mt-2" style="font-size: 10px; line-height: 1.2;">
+                                    Total de vezes que novos visitantes abriram o seu link.
+                                </p>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="glass-card stat-card">
-                                <div class="stat-number text-success"><?= $conversions ?></div>
-                                <div class="stat-label">Indicações</div>
+                            <div class="glass-card stat-card d-flex flex-column justify-content-between h-100 py-3">
+                                <div>
+                                    <div class="stat-number text-success"><?= $conversions ?></div>
+                                    <div class="stat-label">Indicações</div>
+                                </div>
+                                <p class="text-muted small mb-0 mt-2" style="font-size: 10px; line-height: 1.2;">
+                                    Amigos que se cadastraram e ativaram a própria divulgação.
+                                </p>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="glass-card stat-card py-3">
-                                <span class="text-muted fs-7">
+                                <span class="text-muted fs-7 d-block">
                                     👁️ <strong><?= $visualizers ?></strong> amigo(s) visualizaram mas não se cadastraram ainda
                                 </span>
+                                <p class="text-muted small mb-0 mt-1" style="font-size: 10px; line-height: 1.2;">
+                                    Visitantes que acessaram o link, mas ainda não concluíram o cadastro inicial no chat.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -343,7 +360,7 @@
                     <!-- Caixa de Compartilhamento -->
                     <div class="glass-card p-4">
                         <h5 class="mb-3"><i class="bi bi-share me-2 text-primary"></i>Compartilhe e Ganhe</h5>
-                        <p class="text-muted small">Compartilhe o link abaixo. A cada amigo que entrar pelo seu link e indicar outra pessoa, o seu desconto aumenta 10%!</p>
+                        <p class="text-muted small mb-3">Envie seu link exclusivo para seus contatos. Cada nova indicação qualificada na sua cadeia de compartilhamento gera +10% de desconto para você!</p>
                         
                         <div class="share-input-group mb-3">
                             <input type="text" id="shareUrlInput" value="<?= esc($share_url) ?>" readonly>
@@ -356,9 +373,12 @@
                             $whatsappMessage = "Olha que legal! Estou participando da Corrida de Cupons do Marco Santo e já ganhei {$discount}% de desconto! Cadastre-se pelo meu link para ganhar desconto você também e me ajudar a subir o meu: " . $share_url;
                             $whatsappUrl = "https://api.whatsapp.com/send?text=" . urlencode($whatsappMessage);
                         ?>
-                        <a href="<?= $whatsappUrl ?>" target="_blank" class="btn btn-whatsapp w-100 text-center">
+                        <a href="<?= $whatsappUrl ?>" target="_blank" class="btn btn-whatsapp w-100 text-center mb-2">
                             <i class="bi bi-whatsapp me-2"></i> Compartilhar no WhatsApp
                         </a>
+                        <div class="text-center">
+                            <span class="text-muted" style="font-size: 10px;">💡 <strong>Dica:</strong> Compartilhe em grupos de amigos ou redes sociais para acelerar seu ganho!</span>
+                        </div>
                     </div>
 
                     <!-- Caixa de Perfil / Minha Conta -->
@@ -421,7 +441,7 @@
                 <div class="glass-card p-4 h-100 d-flex flex-column">
                     <div class="mb-3">
                         <h4 class="mb-1"><i class="bi bi-diagram-2 me-2 text-primary"></i>Sua Rede de Propagação</h4>
-                        <p class="text-muted mb-0 small">Abaixo você acompanha graficamente como o seu link de desconto está viralizando. Para sua privacidade e de seus amigos, dados pessoais não são exibidos.</p>
+                        <p class="text-muted mb-0 small">Este mapa interativo mostra em tempo real como o seu link está se espalhando. Você pode dar zoom, arrastar os círculos (nós) e posicionar o mouse/dedo sobre eles para ver detalhes.</p>
                     </div>
                     
                     <!-- Grafo Wrapper -->
@@ -430,15 +450,19 @@
                         <div class="graph-legend">
                             <div class="legend-item">
                                 <div class="legend-dot" style="background-color: #6366f1;"></div>
-                                <span>Você (Nó Inicial)</span>
+                                <span><strong>Você:</strong> O início de toda a sua rede de descontos.</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-dot" style="background-color: #22c55e;"></div>
-                                <span>Indicação Ativa (Viralizado)</span>
+                                <span><strong>Indicação Ativa:</strong> Amigos que se cadastraram pelo seu convite.</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-dot" style="background-color: #3b82f6;"></div>
-                                <span>Apenas Visualizou</span>
+                                <span><strong>Apenas Visualizou:</strong> Amigos que abriram o link mas ainda não se cadastraram.</span>
+                            </div>
+                            <hr class="border-secondary my-1">
+                            <div class="text-muted" style="font-size: 9px; line-height: 1.2;">
+                                🔒 <strong>Privacidade Garantida:</strong> Por segurança, os nomes reais dos seus convidados são anonimizados.
                             </div>
                         </div>
                         <div class="graph-tooltip" id="graphTooltip"></div>
