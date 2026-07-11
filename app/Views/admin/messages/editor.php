@@ -241,48 +241,91 @@
 
             <!-- Pane 2: System Messages -->
             <div class="tab-pane fade" id="system-msgs-pane" role="tabpanel">
+                <!-- Seção 1: Chat de Cadastro (Sucesso) -->
                 <div class="card bg-dark border-secondary p-4 mb-4">
                     <div class="row g-3">
                         <div class="col-12">
-                            <h6 class="text-primary mb-3"><i class="bi bi-chat-left-text me-1"></i> Telas do Lead (Landing Page)</h6>
+                            <h5 class="text-success mb-1">
+                                <i class="bi bi-chat-left-heart me-2"></i>1. Sucesso Pós-Cadastro (Visitante)
+                            </h5>
+                            <p class="text-muted small mb-3">
+                                Mensagens que aparecem na tela do chat assim que um visitante preenche o formulário de cadastro pela primeira vez.
+                            </p>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="success_title" class="form-label text-white">Título da Mensagem de Sucesso (Chat)</label>
+                            <label for="success_title" class="form-label text-white fw-bold">Título do Card de Sucesso</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" id="success_title" name="success_title"
                                    placeholder="🎯 Você entrou na Corrida de Cupons!" value="<?= esc($campaign['success_title'] ?? '') ?>">
-                            <div class="form-text text-muted">Título em destaque exibido no card final do chat após cadastro.</div>
+                            <div class="form-text text-muted">
+                                <strong>Onde aparece:</strong> Título em destaque no topo do card final do chat do visitante.
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="success_message" class="form-label text-white">Mensagem exibida após compartilhamento</label>
+                            <label for="success_message" class="form-label text-white fw-bold">Texto de Sucesso (Instruções)</label>
                             <textarea class="form-control bg-dark text-white border-secondary" id="success_message" name="success_message"
                                       rows="3" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= esc($campaign['success_message'] ?? '') ?></textarea>
                             <div class="form-text text-muted">
-                                Texto detalhado do card final. Use <code>{nome}</code> para personalizar.
+                                <strong>Onde aparece:</strong> Parágrafo com instruções que fica abaixo do título de sucesso no chat. <br>
+                                💡 Suporta a variável <code>{nome}</code> (nome do lead).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Proprietário do Link (Dono) -->
+                <div class="card bg-dark border-secondary p-4 mb-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <h5 class="text-warning mb-1">
+                                <i class="bi bi-person-check me-2"></i>2. Retorno do Proprietário do Link (Dono)
+                            </h5>
+                            <p class="text-muted small mb-3">
+                                Mensagem exibida quando um lead que **já compartilhou** clica novamente no seu próprio link de indicação (exibindo o status e metas dele).
+                            </p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="owner_message" class="form-label text-white fw-bold">Mensagem do Dashboard do Lead</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_message" name="owner_message" rows="3"
+                                      placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= esc($campaign['owner_message'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">
+                                <strong>Onde aparece:</strong> Fica logo abaixo do cumprimento ("👋 Olá, [Nome]!") na tela de acompanhamento de quem indicou.<br>
+                                💡 Suporta as variáveis: <code>{nome}</code> (nome do lead), <code>{desconto}</code> (percentual atual de desconto, ex: 30%) e <code>{niveis}</code> (número de níveis ativos).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 3: E-mail de Boas-Vindas -->
+                <div class="card bg-dark border-secondary p-4 mb-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <h5 class="text-info mb-1">
+                                <i class="bi bi-envelope-paper-fill me-2"></i>3. E-mail Transacional de Boas-Vindas
+                            </h5>
+                            <p class="text-muted small mb-3">
+                                E-mail enviado silenciosamente ao participante assim que ele se cadastra, contendo o link exclusivo e a senha do painel dele.
+                            </p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="email_subject" class="form-label text-white fw-bold">Assunto do E-mail</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="email_subject" name="email_subject"
+                                   placeholder="🎯 Corrida de Cupons: Seu link de desconto está ativo!" value="<?= esc($campaign['email_subject'] ?? '') ?>">
+                            <div class="form-text text-muted">
+                                💡 Suporta as variáveis: <code>{nome}</code> e <code>{campanha}</code>.
                             </div>
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="owner_message" class="form-label text-white">Mensagem do Dono do Link (Dashboard do Lead)</label>
-                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_message" name="owner_message" rows="3"
-                                      placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= esc($campaign['owner_message'] ?? '') ?></textarea>
-                            <div class="form-text text-muted">Mensagem de status/boas-vindas para o dono do link. Use <code>{nome}</code>, <code>{desconto}</code>, <code>{niveis}</code>.</div>
-                        </div>
-
-                        <div class="col-12">
-                            <hr class="border-secondary">
-                            <h6 class="text-primary mb-3"><i class="bi bi-envelope me-1"></i> E-mail de Boas-Vindas Transacional</h6>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="email_subject" class="form-label text-white">Assunto do E-mail</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="email_subject" name="email_subject"
-                                   placeholder="🎯 Corrida de Cupons: Seu link de desconto está ativo!" value="<?= esc($campaign['email_subject'] ?? '') ?>">
-                            <div class="form-text text-muted">Placeholders: <code>{nome}</code>, <code>{campanha}</code>.</div>
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label for="email_body" class="form-label text-white">Corpo do E-mail (HTML/Texto)</label>
+                            <label for="email_body" class="form-label text-white fw-bold">Corpo do E-mail (HTML/Pre-wrap)</label>
                             <textarea class="form-control bg-dark text-white border-secondary" id="email_body" name="email_body" rows="6"
                                       placeholder="Escreva a mensagem HTML..."><?= esc($campaign['email_body'] ?? '') ?></textarea>
                             <div class="form-text text-muted">
-                                Placeholders: <code>{nome}</code>, <code>{campanha}</code>, <code>{senha_temporaria}</code>, <code>{link_acesso}</code>, <code>{link_compartilhamento}</code>.
+                                <strong>Onde aparece:</strong> Conteúdo da mensagem de e-mail. Aceita formatação em HTML.<br>
+                                💡 Suporta as variáveis:<br>
+                                - <code>{nome}</code>: Nome do participante.<br>
+                                - <code>{campanha}</code>: Nome da campanha.<br>
+                                - <code>{senha_temporaria}</code>: Senha gerada para acesso.<br>
+                                - <code>{link_acesso}</code>: Link de login rápido de token.<br>
+                                - <code>{link_compartilhamento}</code>: Link de indicação próprio.
                             </div>
                         </div>
                     </div>
