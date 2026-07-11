@@ -35,6 +35,12 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mensagens-tab" data-bs-toggle="tab"
+                    data-bs-target="#mensagens" type="button" role="tab">
+                <i class="bi bi-chat-left-text me-1"></i> Mensagens
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="config-tab" data-bs-toggle="tab"
                     data-bs-target="#config" type="button" role="tab">
                 <i class="bi bi-gear me-1"></i> Configurações
@@ -200,29 +206,35 @@
                                 </option>
                             </select>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Mensagens -->
+        <div class="tab-pane fade" id="mensagens" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
                         <div class="col-12">
-                            <hr class="border-secondary">
-                            <h6 class="text-secondary mb-3">Mensagem de Sucesso</h6>
+                            <h6 class="text-secondary mb-3">Mensagens do Chat da Landing Page</h6>
                         </div>
-                        <div class="col-12">
-                            <label for="success_message" class="form-label">Mensagem exibida após compartilhamento</label>
-                            <textarea class="form-control" id="success_message" name="success_message"
-                                      rows="3" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= old('success_message') ?></textarea>
-                            <div class="form-text mb-3">
-                                Texto exibido ao visitante depois que ele compartilha e ganha o cupom.
-                                Use <code>{nome}</code> para inserir o nome do visitante.
-                                Se vazio, usará a mensagem padrão do sistema.
-                            </div>
-                        </div>
-                        
                         <div class="col-md-6 mb-3">
                             <label for="success_title" class="form-label">Título da Mensagem de Sucesso (Chat)</label>
                             <input type="text" class="form-control" id="success_title" name="success_title"
                                    placeholder="🎯 Você entrou na Corrida de Cupons!" value="<?= old('success_title') ?>">
                             <div class="form-text">Título em destaque exibido no card final do chat.</div>
                         </div>
-
                         <div class="col-md-6 mb-3">
+                            <label for="success_message" class="form-label">Mensagem exibida após compartilhamento</label>
+                            <textarea class="form-control" id="success_message" name="success_message"
+                                      rows="3" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= old('success_message') ?></textarea>
+                            <div class="form-text">
+                                Texto exibido ao visitante depois que ele compartilha. Use <code>{nome}</code>.
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
                             <label for="owner_message" class="form-label">Mensagem para o Proprietário do Link (Dono)</label>
                             <textarea class="form-control" id="owner_message" name="owner_message" rows="2"
                                       placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= old('owner_message') ?></textarea>
