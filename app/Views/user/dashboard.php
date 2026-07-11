@@ -246,6 +246,13 @@
         .form-control::placeholder {
             color: rgba(255,255,255,0.3) !important;
         }
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+        .form-label {
+            color: #cbd5e1 !important;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
