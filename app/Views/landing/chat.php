@@ -280,57 +280,50 @@
         }
         .wa-footer .mic-btn svg { width: 20px; height: 20px; fill: #fff; }
 
-        /* ── Offer Card ── */
-        .offer-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,.6);
-            z-index: 100;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .35s, visibility .35s;
-        }
-        .offer-overlay.visible { opacity: 1; visibility: visible; }
-        .offer-card {
-            background: #1f2c34;
-            border-radius: 20px 20px 0 0;
-            width: 100%;
-            max-width: 500px;
-            padding: 24px 20px 32px;
-            transform: translateY(100%);
-            transition: transform .4s cubic-bezier(.22,.68,0,1.1);
+                /* ── Offer Card (inline no chat) ── */
+        .wa-offer {
+            margin: 12px 0 8px;
             position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: msgIn .4s ease forwards;
         }
-        .offer-overlay.visible .offer-card { transform: translateY(0); }
-        .offer-card::before {
-            content: '';
-            width: 40px; height: 4px;
-            background: rgba(255,255,255,.2);
-            border-radius: 2px;
-            position: absolute;
-            top: 10px; left: 50%; transform: translateX(-50%);
+        .wa-offer-card {
+            background: #1f2c34;
+            border-radius: 12px;
+            padding: 20px 16px 24px;
+            border: 1px solid rgba(255,255,255,.06);
+            box-shadow: 0 2px 8px rgba(0,0,0,.2);
+            touch-action: none;
         }
-        .offer-card .offer-title {
+        .wa-offer-card .drag-handle {
+            width: 40px; height: 5px;
+            background: rgba(255,255,255,.15);
+            border-radius: 3px;
+            margin: 0 auto 16px;
+            cursor: grab;
+            touch-action: none;
+        }
+        .wa-offer-card .drag-handle:active { cursor: grabbing; }
+        .wa-offer-card .offer-title {
             font-size: 20px; font-weight: 700;
             color: #e9edef;
             margin-bottom: 8px;
             text-align: center;
         }
-        .offer-card .offer-body {
+        .wa-offer-card .offer-body {
             font-size: 14px; color: #8696a0;
             text-align: center;
             line-height: 1.5;
             margin-bottom: 16px;
         }
-        .offer-card .offer-img {
+        .wa-offer-card .offer-img {
             width: 100%;
-            border-radius: 12px;
+            border-radius: 10px;
             margin-bottom: 16px;
         }
-        .offer-card .offer-link {
+        .wa-offer-card .offer-link {
             display: block;
             text-align: center;
             color: #00a884;
@@ -338,7 +331,7 @@
             margin-bottom: 16px;
             font-size: 14px;
         }
-        .offer-card .offer-cta {
+        .wa-offer-card .offer-cta {
             display: block;
             width: 100%;
             padding: 14px;
@@ -352,11 +345,11 @@
             text-align: center;
             transition: transform .15s, box-shadow .15s;
         }
-        .offer-card .offer-cta:active {
+        .wa-offer-card .offer-cta:active {
             transform: scale(.97);
         }
 
-        /* ── Share Panel ── */
+        /* ── Share Panel (dentro do card) ── */
         .share-panel {
             display: none;
             text-align: center;
@@ -456,17 +449,7 @@
     </div>
 </div>
 
-<!-- Offer Overlay -->
-<div class="offer-overlay" id="offerOverlay">
-    <div class="offer-card">
-        <div id="offerContent">
-            <!-- Filled by JS -->
-        </div>
-        <div id="sharePanel" class="share-panel">
-            <!-- Filled by JS -->
-        </div>
-    </div>
-</div>
+<!-- Offer & Share panels are injected inline into chatBody by JS -->
 
 <!-- Config -->
 <script>
@@ -501,9 +484,6 @@ const VIRAL_CONFIG = {
 
     const C = VIRAL_CONFIG;
     const chatBody = document.getElementById('chatBody');
-    const offerOverlay = document.getElementById('offerOverlay');
-    const offerContent = document.getElementById('offerContent');
-    const sharePanel = document.getElementById('sharePanel');
 
     let propagatorId = null;
     let propagatorToken = null;
@@ -694,48 +674,142 @@ const VIRAL_CONFIG = {
         return new Promise(r => setTimeout(r, ms));
     }
 
-    // ════════════════════════════════════════
-    //  OFFER
+        // ════════════════════════════════════════
+    //  OFFER (inline no chat)
     // ════════════════════════════════════════
     function showOffer() {
-        let html = '';
-        if (C.offerTitle) html += `<div class="offer-title">${escapeHtml(C.offerTitle)}</div>`;
-        if (C.offerBody) html += `<div class="offer-body">${escapeHtml(C.offerBody)}</div>`;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'wa-offer';
+        wrapper.id = 'offerWrapper';
+
+        let bodyHtml = '';
+        if (C.offerTitle) bodyHtml += `<div class="offer-title">${escapeHtml(C.offerTitle)}</div>`;
+        if (C.offerBody) bodyHtml += `<div class="offer-body">${escapeHtml(C.offerBody)}</div>`;
         if (C.offerType === 'image' && C.offerImage) {
-            html += `<img class="offer-img" src="${escapeHtml(C.offerImage)}" alt="oferta">`;
+            bodyHtml += `<img class="offer-img" src="${escapeHtml(C.offerImage)}" alt="oferta">`;
         }
         if (C.offerType === 'link' && C.offerLinkUrl) {
-            html += `<a class="offer-link" href="${escapeHtml(C.offerLinkUrl)}" target="_blank" rel="noopener">${escapeHtml(C.offerLinkText || C.offerLinkUrl)}</a>`;
+            bodyHtml += `<a class="offer-link" href="${escapeHtml(C.offerLinkUrl)}" target="_blank" rel="noopener">${escapeHtml(C.offerLinkText || C.offerLinkUrl)}</a>`;
         }
 
-        // Add Name, Email and Phone Form Fields
-        html += `
+        // Form fields
+        bodyHtml += `
         <div style="margin-bottom: 16px; text-align: left;">
             <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu Nome:</label>
             <input type="text" id="leadName" placeholder="Digite seu nome completo" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none; margin-bottom:12px;">
-            
+
             <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu E-mail:</label>
             <input type="email" id="leadEmail" placeholder="seuemail@exemplo.com" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none; margin-bottom:12px;">
 
             <label style="display:block; font-size:12px; color:#8696a0; margin-bottom:4px; font-weight:500;">Seu WhatsApp (Telefone):</label>
             <input type="tel" id="leadPhone" placeholder="(00) 00000-0000" style="width:100%; background:#2a3942; border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 14px; color:#e9edef; font-size:14px; outline:none;">
             <div id="formError" style="color:#f25c54; font-size:12px; margin-top:6px; display:none; font-weight:500;"></div>
-        </div>
-        `;
+        </div>`;
 
-        html += `<button class="offer-cta" id="btnCta">${escapeHtml(C.offerCtaText)}</button>`;
+        bodyHtml += `<button class="offer-cta" id="btnCta">${escapeHtml(C.offerCtaText)}</button>`;
 
-        offerContent.innerHTML = html;
-        offerOverlay.classList.add('visible');
+        wrapper.innerHTML = `
+            <div class="wa-offer-card">
+                <div class="drag-handle" id="dragHandle"></div>
+                <div id="offerContent">${bodyHtml}</div>
+                <div id="sharePanel" class="share-panel"></div>
+            </div>`;
 
-        // Add phone masking
+        chatBody.appendChild(wrapper);
+        scrollToBottom();
+
+        // Drag-to-dismiss / drag-to-top
+        setupDrag(wrapper);
+
+        // Phone mask
         const phoneInput = document.getElementById('leadPhone');
-        phoneInput.addEventListener('input', (e) => {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
-            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-        });
+        if (phoneInput) {
+            phoneInput.addEventListener('input', (e) => {
+                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+                e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+            });
+        }
 
         document.getElementById('btnCta').addEventListener('click', handleViralize);
+    }
+
+    function setupDrag(wrapper) {
+        const handle = wrapper.querySelector('.drag-handle');
+        if (!handle) return;
+
+        let startY = 0, currentY = 0, dragging = false;
+        const card = wrapper.querySelector('.wa-offer-card');
+        const body = chatBody;
+
+        function onStart(e) {
+            dragging = true;
+            startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            currentY = startY;
+            card.style.transition = 'none';
+            card.style.position = 'relative';
+            card.style.zIndex = '10';
+        }
+
+        function onMove(e) {
+            if (!dragging) return;
+            e.preventDefault();
+            const y = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            const delta = y - startY;
+            currentY = y;
+
+            if (delta < 0) {
+                // Dragging up — scroll the chat up instead of moving the card
+                body.scrollTop -= delta * 0.3;
+                startY = y;
+            } else {
+                // Dragging down — move card with resistance
+                card.style.transform = `translateY(${delta * 0.4}px)`;
+                card.style.opacity = Math.max(0.3, 1 - delta / 400);
+            }
+        }
+
+        function onEnd() {
+            if (!dragging) return;
+            dragging = false;
+            const delta = currentY - startY;
+            card.style.transition = 'transform .3s ease, opacity .3s ease';
+            card.style.transform = '';
+            card.style.opacity = '';
+
+            if (delta > 120) {
+                // Swipe down far enough — collapse card into a small bar
+                collapseCard(wrapper);
+            }
+        }
+
+        handle.addEventListener('mousedown', onStart);
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+
+        handle.addEventListener('touchstart', onStart, { passive: true });
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd);
+    }
+
+    function collapseCard(wrapper) {
+        const card = wrapper.querySelector('.wa-offer-card');
+        card.style.transition = 'all .3s ease';
+        card.style.transform = '';
+        card.style.opacity = '';
+        card.style.maxHeight = '48px';
+        card.style.overflow = 'hidden';
+        card.style.padding = '10px 16px';
+        card.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" id="restoreBar">
+                <span style="color:#8696a0;font-size:13px;">📋 Formulário recolhido</span>
+                <span style="color:#00a884;font-size:13px;font-weight:600;">Expandir ▲</span>
+            </div>`;
+        card.querySelector('#restoreBar').addEventListener('click', () => {
+            // Rebuild the full offer card
+            wrapper.remove();
+            showOffer();
+        });
+        scrollToBottom();
     }
 
     // ════════════════════════════════════════
@@ -809,26 +883,30 @@ const VIRAL_CONFIG = {
         }
     }
 
-    function showSharePanel(url) {
-        offerContent.classList.add('hidden');
-        sharePanel.innerHTML = `
-            <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
-            <div style="font-size:12px; color:#8696a0; margin-bottom:20px; line-height:1.5;">
-                Enviamos um e-mail com as regras e o seu link de acesso exclusivo.<br>
-                <strong>Seu desconto inicial de 10% já está ativo!</strong><br>
-                Indique amigos e aumente seu desconto para até 80%!
-            </div>
-            <div class="share-link-box">
-                <input type="text" id="shareLinkInput" value="${escapeHtml(url)}" readonly>
-                <button type="button" id="btnCopyLink">Copiar</button>
-            </div>
-            <button type="button" class="share-wa-btn" id="btnShareWa">
-                <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-                Compartilhar no WhatsApp
-            </button>`;
-        sharePanel.classList.add('visible');
+        function showSharePanel(url) {
+        const sharePanel = document.getElementById('sharePanel');
+        const offerContent = document.getElementById('offerContent');
+        if (offerContent) offerContent.classList.add('hidden');
+        if (sharePanel) {
+            sharePanel.innerHTML = `
+                <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
+                <div style="font-size:12px; color:#8696a0; margin-bottom:20px; line-height:1.5;">
+                    Enviamos um e-mail com as regras e o seu link de acesso exclusivo.<br>
+                    <strong>Seu desconto inicial de 10% já está ativo!</strong><br>
+                    Indique amigos e aumente seu desconto para até 80%!
+                </div>
+                <div class="share-link-box">
+                    <input type="text" id="shareLinkInput" value="${escapeHtml(url)}" readonly>
+                    <button type="button" id="btnCopyLink">Copiar</button>
+                </div>
+                <button type="button" class="share-wa-btn" id="btnShareWa">
+                    <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                    Compartilhar no WhatsApp
+                </button>`;
+            sharePanel.classList.add('visible');
+        }
 
-        document.getElementById('btnCopyLink').addEventListener('click', () => {
+        document.getElementById('btnCopyLink')?.addEventListener('click', () => {
             const input = document.getElementById('shareLinkInput');
             navigator.clipboard.writeText(input.value).then(() => {
                 document.getElementById('btnCopyLink').textContent = 'Copiado! ✓';
@@ -838,21 +916,23 @@ const VIRAL_CONFIG = {
             });
         });
 
-        document.getElementById('btnShareWa').addEventListener('click', () => {
-            const text = C.offerTitle
-                ? C.offerTitle + ' — ' + url
-                : url;
+        document.getElementById('btnShareWa')?.addEventListener('click', () => {
+            const text = C.offerTitle ? C.offerTitle + ' — ' + url : url;
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
         });
+
+        scrollToBottom();
     }
 
     function showOwnerDashboard() {
-        offerContent.classList.add('hidden');
-        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'wa-offer';
+        wrapper.id = 'offerWrapper';
+
         const nextDepth = C.parentMaxDepth + 1;
         const nextDiscount = Math.min(80, nextDepth * 10);
         const percentText = C.parentDiscount > 0 ? `${C.parentDiscount}% de desconto!` : 'nenhum desconto ainda.';
-        
+
         let progressHtml = '';
         if (C.parentDiscount < 80) {
             progressHtml = `
@@ -870,31 +950,34 @@ const VIRAL_CONFIG = {
 
         const shareUrl = C.baseUrl + 'v/' + C.campaignSlug + '/' + C.parentToken;
 
-        sharePanel.innerHTML = `
-            <div class="share-title" style="margin-bottom: 8px;">👋 Olá, ${escapeHtml(C.parentName)}!</div>
-            <div style="font-size: 14px; color: #8696a0; margin-bottom: 20px;">
-                Você conquistou acumulado <strong style="color:#22c55e; font-size:16px;">${percentText}</strong>
-            </div>
-            
-            <div style="text-align: left; font-size:13px; color:#8696a0; margin-bottom: 12px;">
-                🔑 Níveis ativos na sua rede: <strong>${C.parentMaxDepth}</strong>
-            </div>
+        wrapper.innerHTML = `
+            <div class="wa-offer-card">
+                <div class="drag-handle" id="dragHandle"></div>
+                <div class="share-panel visible">
+                    <div class="share-title" style="margin-bottom: 8px;">👋 Olá, ${escapeHtml(C.parentName)}!</div>
+                    <div style="font-size: 14px; color: #8696a0; margin-bottom: 20px;">
+                        Você conquistou acumulado <strong style="color:#22c55e; font-size:16px;">${percentText}</strong>
+                    </div>
+                    <div style="text-align: left; font-size:13px; color:#8696a0; margin-bottom: 12px;">
+                        🔑 Níveis ativos na sua rede: <strong>${C.parentMaxDepth}</strong>
+                    </div>
+                    ${progressHtml}
+                    <div class="share-link-box">
+                        <input type="text" id="shareLinkInput" value="${escapeHtml(shareUrl)}" readonly>
+                        <button type="button" id="btnCopyLink">Copiar</button>
+                    </div>
+                    <button type="button" class="share-wa-btn" id="btnShareWa">
+                        <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                        Compartilhar no WhatsApp
+                    </button>
+                </div>
+            </div>`;
 
-            ${progressHtml}
+        chatBody.appendChild(wrapper);
+        setupDrag(wrapper);
+        scrollToBottom();
 
-            <div class="share-link-box">
-                <input type="text" id="shareLinkInput" value="${escapeHtml(shareUrl)}" readonly>
-                <button type="button" id="btnCopyLink">Copiar</button>
-            </div>
-            <button type="button" class="share-wa-btn" id="btnShareWa">
-                <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-                Compartilhar no WhatsApp
-            </button>`;
-            
-        sharePanel.classList.add('visible');
-        offerOverlay.classList.add('visible');
-
-        document.getElementById('btnCopyLink').addEventListener('click', () => {
+        document.getElementById('btnCopyLink')?.addEventListener('click', () => {
             const input = document.getElementById('shareLinkInput');
             navigator.clipboard.writeText(input.value).then(() => {
                 document.getElementById('btnCopyLink').textContent = 'Copiado! ✓';
@@ -904,10 +987,8 @@ const VIRAL_CONFIG = {
             });
         });
 
-        document.getElementById('btnShareWa').addEventListener('click', () => {
-            const text = C.offerTitle
-                ? C.offerTitle + ' — ' + shareUrl
-                : shareUrl;
+        document.getElementById('btnShareWa')?.addEventListener('click', () => {
+            const text = C.offerTitle ? C.offerTitle + ' — ' + shareUrl : shareUrl;
             window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
         });
     }
