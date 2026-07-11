@@ -16,7 +16,7 @@ class CampaignModel extends Model
         'offer_type', 'offer_title', 'offer_body', 'offer_image',
         'offer_link_url', 'offer_link_text', 'offer_cta_text',
         'og_title', 'og_description', 'og_image',
-        'contact_name', 'contact_avatar', 'chat_messages',
+        'contact_name', 'contact_avatar', 'chat_messages', 'success_message',
         'created_at', 'updated_at', 'expires_at',
     ];
     protected $useTimestamps = true;
