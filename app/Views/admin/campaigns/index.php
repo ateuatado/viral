@@ -92,6 +92,14 @@
                                        class="btn btn-outline-info text-white border-info-subtle" title="Analytics">
                                         <i class="bi bi-graph-up text-info"></i>
                                     </a>
+                                    <?php if (!empty($campaign['seed_token'])): ?>
+                                        <button type="button"
+                                            class="btn btn-outline-light text-white border-light-subtle btn-copy-link"
+                                            title="Copiar link de divulgação"
+                                            data-url="<?= base_url('v/' . esc($campaign['slug']) . '/' . esc($campaign['seed_token'])) ?>">
+                                            <i class="bi bi-link-45deg"></i>
+                                        </button>
+                                    <?php endif; ?>
                                     <form action="/admin/campaigns/<?= esc($campaign['id']) ?>/toggle-status"
                                           method="post" class="d-inline">
                                         <?= csrf_field() ?>
@@ -117,4 +125,39 @@
     </div>
 <?php endif; ?>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+document.querySelectorAll('.btn-copy-link').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const url = btn.dataset.url;
+        try {
+            await navigator.clipboard.writeText(url);
+            // Visual feedback
+            const icon = btn.querySelector('i');
+            const origClass = icon.className;
+            icon.className = 'bi bi-check-lg';
+            btn.classList.remove('border-light-subtle');
+            btn.classList.add('border-success', 'text-success');
+            btn.title = 'Copiado!';
+            setTimeout(() => {
+                icon.className = origClass;
+                btn.classList.add('border-light-subtle');
+                btn.classList.remove('border-success', 'text-success');
+                btn.title = 'Copiar link de divulgação';
+            }, 2000);
+        } catch (err) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            btn.title = 'Copiado!';
+        }
+    });
+});
+</script>
 <?= $this->endSection() ?>

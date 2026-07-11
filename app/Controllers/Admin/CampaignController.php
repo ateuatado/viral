@@ -21,8 +21,17 @@ class CampaignController extends BaseController
 
     public function index()
     {
+        $campaigns = $this->campaignModel->orderBy('created_at', 'DESC')->findAll();
+
+        // Attach seed token and page view count to each campaign
+        foreach ($campaigns as &$c) {
+            $seed = $this->propagatorModel->where('campaign_id', $c['id'])
+                ->where('is_seed', true)->first();
+            $c['seed_token'] = $seed ? $seed['token'] : null;
+        }
+
         $data = [
-            'campaigns' => $this->campaignModel->orderBy('created_at', 'DESC')->findAll(),
+            'campaigns' => $campaigns,
         ];
         return view('admin/campaigns/index', $data);
     }
