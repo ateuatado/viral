@@ -38,11 +38,17 @@ class MessageController extends BaseController
         $campaign = $this->campaignModel->find($campaignId);
         if (!$campaign) return $this->response->setJSON(['error' => 'Campanha não encontrada'])->setStatusCode(404);
 
-        $messages = $this->request->getJSON(true);
-        if (!is_array($messages)) $messages = [];
+        $payload = $this->request->getJSON(true);
+        $chatMessages = $payload['chat_messages'] ?? [];
+        if (!is_array($chatMessages)) $chatMessages = [];
 
         $this->campaignModel->skipValidation(true)->update($campaignId, [
-            'chat_messages' => $messages,
+            'chat_messages'   => $chatMessages,
+            'success_title'   => $payload['success_title'] ?? '',
+            'success_message' => $payload['success_message'] ?? '',
+            'owner_message'   => $payload['owner_message'] ?? '',
+            'email_subject'   => $payload['email_subject'] ?? '',
+            'email_body'      => $payload['email_body'] ?? '',
         ]);
 
         return $this->response->setJSON(['success' => true, 'message' => 'Mensagens salvas!']);

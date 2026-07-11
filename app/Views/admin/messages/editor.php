@@ -214,12 +214,81 @@
 <div class="editor-container">
     <!-- Left: Message Blocks -->
     <div class="editor-panel">
-        <div id="messageList">
-            <!-- Blocks rendered by JS -->
+        <!-- Tabs -->
+        <ul class="nav nav-pills mb-3" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="flow-tab" data-bs-toggle="tab" data-bs-target="#flow-pane" type="button" role="tab">
+                    <i class="bi bi-chat-dots me-1"></i> Fluxo de Conversa
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="system-msgs-tab" data-bs-toggle="tab" data-bs-target="#system-msgs-pane" type="button" role="tab">
+                    <i class="bi bi-gear-fill me-1"></i> E-mail e Sucesso
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Pane 1: Flow -->
+            <div class="tab-pane fade show active" id="flow-pane" role="tabpanel">
+                <div id="messageList">
+                    <!-- Blocks rendered by JS -->
+                </div>
+                <button type="button" class="btn-add-msg" id="btnAddMessage">
+                    <i class="bi bi-plus-lg me-2"></i> Adicionar Mensagem
+                </button>
+            </div>
+
+            <!-- Pane 2: System Messages -->
+            <div class="tab-pane fade" id="system-msgs-pane" role="tabpanel">
+                <div class="card bg-dark border-secondary p-4 mb-4">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3"><i class="bi bi-chat-left-text me-1"></i> Telas do Lead (Landing Page)</h6>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="success_title" class="form-label text-white">Título da Mensagem de Sucesso (Chat)</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="success_title" name="success_title"
+                                   placeholder="🎯 Você entrou na Corrida de Cupons!" value="<?= esc($campaign['success_title'] ?? '') ?>">
+                            <div class="form-text text-muted">Título em destaque exibido no card final do chat após cadastro.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="success_message" class="form-label text-white">Mensagem exibida após compartilhamento</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="success_message" name="success_message"
+                                      rows="3" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= esc($campaign['success_message'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">
+                                Texto detalhado do card final. Use <code>{nome}</code> para personalizar.
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="owner_message" class="form-label text-white">Mensagem do Dono do Link (Dashboard do Lead)</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="owner_message" name="owner_message" rows="3"
+                                      placeholder="Você conquistou acumulado {desconto} com {niveis} níveis ativos."><?= esc($campaign['owner_message'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">Mensagem de status/boas-vindas para o dono do link. Use <code>{nome}</code>, <code>{desconto}</code>, <code>{niveis}</code>.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="border-secondary">
+                            <h6 class="text-primary mb-3"><i class="bi bi-envelope me-1"></i> E-mail de Boas-Vindas Transacional</h6>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="email_subject" class="form-label text-white">Assunto do E-mail</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="email_subject" name="email_subject"
+                                   placeholder="🎯 Corrida de Cupons: Seu link de desconto está ativo!" value="<?= esc($campaign['email_subject'] ?? '') ?>">
+                            <div class="form-text text-muted">Placeholders: <code>{nome}</code>, <code>{campanha}</code>.</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="email_body" class="form-label text-white">Corpo do E-mail (HTML/Texto)</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="email_body" name="email_body" rows="6"
+                                      placeholder="Escreva a mensagem HTML..."><?= esc($campaign['email_body'] ?? '') ?></textarea>
+                            <div class="form-text text-muted">
+                                Placeholders: <code>{nome}</code>, <code>{campanha}</code>, <code>{senha_temporaria}</code>, <code>{link_acesso}</code>, <code>{link_compartilhamento}</code>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="button" class="btn-add-msg" id="btnAddMessage">
-            <i class="bi bi-plus-lg me-2"></i> Adicionar Mensagem
-        </button>
     </div>
 
     <!-- Right: WhatsApp Preview -->
@@ -463,6 +532,15 @@
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Salvando...';
 
+        const payload = {
+            chat_messages: messages,
+            success_title: document.getElementById('success_title').value,
+            success_message: document.getElementById('success_message').value,
+            owner_message: document.getElementById('owner_message').value,
+            email_subject: document.getElementById('email_subject').value,
+            email_body: document.getElementById('email_body').value,
+        };
+
         try {
             const resp = await fetch(`/admin/campaigns/${CAMPAIGN_ID}/messages`, {
                 method: 'POST',
@@ -471,7 +549,7 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     [`${CSRF_NAME}`]: CSRF_HASH,
                 },
-                body: JSON.stringify(messages),
+                body: JSON.stringify(payload),
             });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data.error || 'Erro ao salvar');
