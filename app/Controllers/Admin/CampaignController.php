@@ -152,7 +152,13 @@ class CampaignController extends BaseController
         $history[] = ['action' => 'updated', 'date' => date('Y-m-d H:i:s')];
         $data['history'] = $history;
 
-        if (!$this->campaignModel->update($id, $data)) {
+        // Validação manual de slug único (ignorando o próprio registro)
+        $existingSlug = $this->campaignModel->where('slug', $data['slug'])->where('id !=', $id)->first();
+        if ($existingSlug) {
+            return redirect()->back()->withInput()->with('error', 'Este slug já está em uso por outra campanha.');
+        }
+
+        if (!$this->campaignModel->skipValidation(true)->update($id, $data)) {
             return redirect()->back()->withInput()->with('errors', $this->campaignModel->errors());
         }
 
