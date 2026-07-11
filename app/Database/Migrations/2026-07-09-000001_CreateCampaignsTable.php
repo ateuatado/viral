@@ -26,6 +26,7 @@ class CreateCampaignsTable extends Migration
             'offer_link_url' => ['type' => 'VARCHAR', 'constraint' => 500, 'null' => true],
             'offer_link_text' => ['type' => 'VARCHAR', 'constraint' => 100, 'null' => true],
             'offer_cta_text' => ['type' => 'VARCHAR', 'constraint' => 100, 'default' => 'Compartilhe e ganhe!'],
+            'success_message' => ['type' => 'TEXT', 'null' => true],
             'og_title' => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
             'og_description' => ['type' => 'TEXT', 'null' => true],
             'og_image' => ['type' => 'VARCHAR', 'constraint' => 500, 'null' => true],

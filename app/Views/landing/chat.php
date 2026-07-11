@@ -468,6 +468,7 @@ const VIRAL_CONFIG = {
     offerLinkUrl: <?= json_encode($campaign['offer_link_url'] ?? '') ?>,
     offerLinkText: <?= json_encode($campaign['offer_link_text'] ?? '') ?>,
     offerCtaText: <?= json_encode($campaign['offer_cta_text'] ?? 'Compartilhe e ganhe!') ?>,
+    successMessage: <?= json_encode($campaign['success_message'] ?? '') ?>,
     csrfName: <?= json_encode($csrfName) ?>,
     csrfHash: <?= json_encode($csrfHash) ?>,
     baseUrl: <?= json_encode(base_url()) ?>,
@@ -883,18 +884,29 @@ const VIRAL_CONFIG = {
         }
     }
 
-        function showSharePanel(url) {
+                function showSharePanel(url) {
         const sharePanel = document.getElementById('sharePanel');
         const offerContent = document.getElementById('offerContent');
         if (offerContent) offerContent.classList.add('hidden');
-        if (sharePanel) {
-            sharePanel.innerHTML = `
-                <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
+
+        // Build success message (custom or default)
+        let successHtml = '';
+        if (C.successMessage) {
+            const personalized = C.successMessage.replace(/\{nome\}/g, escapeHtml(C.parentName || ''));
+            successHtml = '<div style="font-size:13px; color:#e9edef; margin-bottom:20px; line-height:1.6; text-align:left; white-space:pre-wrap;">' + personalized + '</div>';
+        } else {
+            successHtml = `
                 <div style="font-size:12px; color:#8696a0; margin-bottom:20px; line-height:1.5;">
                     Enviamos um e-mail com as regras e o seu link de acesso exclusivo.<br>
                     <strong>Seu desconto inicial de 10% já está ativo!</strong><br>
                     Indique amigos e aumente seu desconto para até 80%!
-                </div>
+                </div>`;
+        }
+
+        if (sharePanel) {
+            sharePanel.innerHTML = `
+                <div class="share-title" style="font-size:1.15rem; margin-bottom:8px;">🎯 Você entrou na Corrida de Cupons!</div>
+                ${successHtml}
                 <div class="share-link-box">
                     <input type="text" id="shareLinkInput" value="${escapeHtml(url)}" readonly>
                     <button type="button" id="btnCopyLink">Copiar</button>

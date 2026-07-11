@@ -200,6 +200,20 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="col-12">
+                            <hr class="border-secondary">
+                            <h6 class="text-secondary mb-3">Mensagem de Sucesso</h6>
+                        </div>
+                        <div class="col-12">
+                            <label for="success_message" class="form-label">Mensagem exibida após compartilhamento</label>
+                            <textarea class="form-control" id="success_message" name="success_message"
+                                      rows="4" placeholder="🎯 Você entrou na Corrida de Cupons!..."><?= old('success_message') ?></textarea>
+                            <div class="form-text">
+                                Texto exibido ao visitante depois que ele compartilha e ganha o cupom.
+                                Use <code>{nome}</code> para inserir o nome do visitante.
+                                Se vazio, usará a mensagem padrão do sistema.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
