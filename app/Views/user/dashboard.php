@@ -229,6 +229,23 @@
             right: 20px;
             z-index: 1050;
         }
+
+        /* Custom Form Controls for Profile */
+        .form-control:focus {
+            background-color: rgba(30, 41, 59, 0.9) !important;
+            border-color: var(--accent-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25) !important;
+            color: #fff !important;
+        }
+        .form-control {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid var(--border-color) !important;
+            color: #fff !important;
+            border-radius: 0.5rem;
+        }
+        .form-control::placeholder {
+            color: rgba(255,255,255,0.3) !important;
+        }
     </style>
 </head>
 <body>
@@ -251,6 +268,20 @@
 
     <!-- ── Main Content ────────────────────────────────────────────────── -->
     <main class="container mb-5 flex-grow-1">
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="alert alert-success alert-dismissible fade show border-0 bg-success text-white mb-4" role="alert" style="border-radius: 0.5rem;">
+                <i class="bi bi-check-circle-fill me-2"></i> <?= session()->getFlashdata('success') ?>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show border-0 bg-danger text-white mb-4" role="alert" style="border-radius: 0.5rem;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> <?= session()->getFlashdata('error') ?>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <div class="row g-4">
             
             <!-- Coluna Esquerda: Estatísticas e Desconto -->
@@ -322,6 +353,58 @@
                             <i class="bi bi-whatsapp me-2"></i> Compartilhar no WhatsApp
                         </a>
                     </div>
+
+                    <!-- Caixa de Perfil / Minha Conta -->
+                    <div class="glass-card p-4">
+                        <h5 class="mb-3"><i class="bi bi-person-bounding-box me-2 text-primary"></i>Meus Dados e Acesso</h5>
+                        <p class="text-muted small">Mantenha seu cadastro atualizado para garantir o recebimento dos cupons e gerenciar seu acesso ao painel.</p>
+                        
+                        <form action="/user/profile/update" method="POST" id="profileForm">
+                            <?= csrf_field() ?>
+                            
+                            <div class="mb-3">
+                                <label for="profileName" class="form-label small text-muted mb-1">Nome Completo</label>
+                                <input type="text" class="form-control" id="profileName" name="name" value="<?= esc($propagator['name'] ?? '') ?>" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileEmail" class="form-label small text-muted mb-1">E-mail (Usado para Login)</label>
+                                <input type="email" class="form-control" id="profileEmail" name="email" value="<?= esc($propagator['email'] ?? '') ?>" required>
+                            </div>
+                            
+                            <div class="row mb-3 g-2">
+                                <div class="col-6">
+                                    <label for="profilePhone" class="form-label small text-muted mb-1">WhatsApp</label>
+                                    <input type="text" class="form-control" id="profilePhone" name="phone" value="<?= esc($propagator['phone'] ?? '') ?>" placeholder="(99) 99999-9999" required>
+                                </div>
+                                <div class="col-6">
+                                    <label for="profileInstagram" class="form-label small text-muted mb-1">Instagram (@usuario)</label>
+                                    <input type="text" class="form-control" id="profileInstagram" name="instagram" value="<?= esc($propagator['instagram'] ?? '') ?>" placeholder="@seuinsta">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profileCpf" class="form-label small text-muted mb-1">CPF (Para resgate de prêmios)</label>
+                                <input type="text" class="form-control" id="profileCpf" name="cpf" value="<?= esc($propagator['cpf'] ?? '') ?>" placeholder="000.000.000-00">
+                            </div>
+                            
+                            <hr class="border-secondary my-3">
+                            
+                            <div class="mb-3">
+                                <label for="profilePassword" class="form-label small text-muted mb-1">Nova Senha (deixe em branco para manter a atual)</label>
+                                <input type="password" class="form-control" id="profilePassword" name="password" placeholder="Mínimo 8 caracteres">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="profilePasswordConfirm" class="form-label small text-muted mb-1">Confirmar Nova Senha</label>
+                                <input type="password" class="form-control" id="profilePasswordConfirm" name="password_confirm" placeholder="Repita a nova senha">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-outline-primary btn-sm w-100 fw-bold">
+                                <i class="bi bi-save me-1"></i> Salvar Alterações
+                            </button>
+                        </form>
+                    </div>
                     
                 </div>
             </div>
@@ -374,7 +457,7 @@
     <!-- Bootstrap Bundle JS -->
     <script src="/assets/vendor/js/bootstrap.bundle.min.js"></script>
     <!-- D3.js v7 -->
-    <script src="/assets/vendor/js/d3.min.js"></script>
+    <script src="/assets/vendor/js/d3.v7.min.js"></script>
 
     <script>
         // Copiar Link
@@ -507,6 +590,24 @@
                     d.fy = null;
                 }
             });
+
+            // Máscaras de Digitação
+            const phoneInput = document.getElementById('profilePhone');
+            const cpfInput = document.getElementById('profileCpf');
+
+            if (phoneInput) {
+                phoneInput.addEventListener('input', (e) => {
+                    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+                    e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+                });
+            }
+
+            if (cpfInput) {
+                cpfInput.addEventListener('input', (e) => {
+                    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
+                    e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + (x[3] ? '.' + x[3] : '') + (x[4] ? '-' + x[4] : '');
+                });
+            }
         });
     </script>
 </body>

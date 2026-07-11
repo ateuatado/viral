@@ -11,7 +11,7 @@ class PropagatorModel extends Model
     protected $useAutoIncrement = false;
     protected $returnType = 'array';
     protected $allowedFields = [
-        'id', 'campaign_id', 'token', 'parent_token', 'depth', 'name', 'phone', 'email', 'auth_token',
+        'id', 'campaign_id', 'token', 'parent_token', 'depth', 'name', 'phone', 'cpf', 'instagram', 'email', 'auth_token',
         'fingerprint', 'ip', 'user_agent', 'referrer',
         'language', 'screen_resolution', 'timezone', 'platform',
         'latitude', 'longitude', 'geo_accuracy',

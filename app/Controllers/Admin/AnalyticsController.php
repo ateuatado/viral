@@ -192,7 +192,7 @@ class AnalyticsController extends BaseController
         fwrite($output, "\xEF\xBB\xBF");
 
         fputcsv($output, [
-            'Token', 'Token Pai', 'Nome', 'E-mail', 'WhatsApp', 'Desconto (%)', 'Profundidade', 'IP', 'Plataforma',
+            'Token', 'Token Pai', 'Nome', 'E-mail', 'WhatsApp', 'CPF', 'Instagram', 'Desconto (%)', 'Profundidade', 'IP', 'Plataforma',
             'Idioma', 'Resolução', 'Timezone', 'Latitude', 'Longitude',
             'Viralizado', 'Criado em',
         ]);
@@ -207,6 +207,8 @@ class AnalyticsController extends BaseController
                 $p['name'] ?? '-',
                 $p['email'] ?? '-',
                 $p['phone'] ?? '-',
+                $p['cpf'] ?? '-',
+                $p['instagram'] ?? '-',
                 $discount . '%',
                 $p['depth'],
                 $p['ip'] ?? '-',
@@ -299,17 +301,19 @@ class AnalyticsController extends BaseController
             }
             
             return [
-                'id' => $node['id'],
-                'token' => $node['token'],
-                'name' => $node['name'],
-                'email' => $node['email'],
-                'phone' => $node['phone'],
-                'is_seed' => (bool)$node['is_seed'],
-                'viralized' => (bool)$node['viralized'],
-                'depth' => (int)$node['depth'],
-                'discount' => $discount,
+                'id'          => $node['id'],
+                'token'       => $node['token'],
+                'name'        => $node['name'],
+                'email'       => $node['email'],
+                'phone'       => $node['phone'],
+                'cpf'         => $node['cpf'] ?? '',
+                'instagram'   => $node['instagram'] ?? '',
+                'is_seed'     => (bool)$node['is_seed'],
+                'viralized'   => (bool)$node['viralized'],
+                'depth'       => (int)$node['depth'],
+                'discount'    => $discount,
                 'visualizers' => $visualizersCount,
-                'children' => $viralizedChildren,
+                'children'    => $viralizedChildren,
             ];
         };
 

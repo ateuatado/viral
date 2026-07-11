@@ -210,4 +210,90 @@ class UserDashboardController extends BaseController
             'links' => $links,
         ]);
     }
+
+    /**
+     * Atualiza as informações do perfil do propagador e a senha do Shield se fornecida.
+     */
+    public function updateProfile()
+    {
+        if (!auth()->loggedIn()) {
+            return redirect()->to('/login');
+        }
+
+        $user = auth()->user();
+        $propagatorModel = new PropagatorModel();
+
+        // Busca o propagador correspondente ao usuário logado
+        $propagator = $propagatorModel->where('email', $user->email)->first();
+        if (!$propagator) {
+            return redirect()->to('/login')->with('error', 'Conta de usuário sem lead correspondente.');
+        }
+
+        $name = trim($this->request->getPost('name') ?? '');
+        $phone = trim($this->request->getPost('phone') ?? '');
+        $email = trim($this->request->getPost('email') ?? '');
+        $cpf = trim($this->request->getPost('cpf') ?? '');
+        $instagram = trim($this->request->getPost('instagram') ?? '');
+        $password = $this->request->getPost('password');
+        $passwordConfirm = $this->request->getPost('password_confirm');
+
+        // Validações básicas
+        if (empty($name) || empty($phone) || empty($email)) {
+            return redirect()->back()->withInput()->with('error', 'Nome, E-mail e WhatsApp são obrigatórios.');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return redirect()->back()->withInput()->with('error', 'Formato de e-mail inválido.');
+        }
+
+        // Validação de senha se preenchida
+        if (!empty($password)) {
+            if ($password !== $passwordConfirm) {
+                return redirect()->back()->withInput()->with('error', 'As senhas digitadas não coincidem.');
+            }
+            if (strlen($password) < 8) {
+                return redirect()->back()->withInput()->with('error', 'A nova senha deve ter no mínimo 8 caracteres.');
+            }
+        }
+
+        // Se o e-mail mudou, verifica se já não existe outro usuário com esse e-mail no Shield
+        $users = auth()->getProvider();
+        if ($email !== $user->email) {
+            $existing = $users->findByCredentials(['email' => $email]);
+            if ($existing) {
+                return redirect()->back()->withInput()->with('error', 'Este endereço de e-mail já está sendo utilizado por outra conta.');
+            }
+            // Atualiza e-mail no Shield
+            $user->email = $email;
+        }
+
+        // Atualiza senha no Shield se preenchida
+        if (!empty($password)) {
+            $user->password = $password;
+        }
+
+        // Salva as alterações do usuário no Shield se houver mudanças
+        if ($email !== $user->email || !empty($password)) {
+            try {
+                $users->save($user);
+            } catch (\Throwable $e) {
+                return redirect()->back()->withInput()->with('error', 'Erro ao atualizar credenciais: ' . $e->getMessage());
+            }
+        }
+
+        // Atualiza no model Propagator
+        try {
+            $propagatorModel->update($propagator['id'], [
+                'name'      => $name,
+                'phone'     => $phone,
+                'email'     => $email,
+                'cpf'       => $cpf,
+                'instagram' => $instagram,
+            ]);
+        } catch (\Throwable $e) {
+            return redirect()->back()->withInput()->with('error', 'Erro ao salvar informações do perfil: ' . $e->getMessage());
+        }
+
+        return redirect()->to('/user/dashboard')->with('success', 'Perfil atualizado com sucesso!');
+    }
 }

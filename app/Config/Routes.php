@@ -68,5 +68,6 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin'], function ($route
 // ===== USER DASHBOARD (Shield Protected - Leads) =====
 $routes->group('user', ['filter' => 'session'], function ($routes) {
     $routes->get('dashboard', 'User\UserDashboardController::index');
+    $routes->post('profile/update', 'User\UserDashboardController::updateProfile');
     $routes->get('api/network', 'User\UserDashboardController::networkJson');
 });

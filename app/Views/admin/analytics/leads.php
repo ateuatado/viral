@@ -197,6 +197,12 @@
                                         if (!empty($branch['email'])) {
                                             $html .= '<span class="me-3"><i class="bi bi-envelope me-1 text-primary"></i>' . esc($branch['email']) . '</span>';
                                         }
+                                        if (!empty($branch['instagram'])) {
+                                            $html .= '<span class="me-3"><i class="bi bi-instagram me-1 text-danger"></i>' . esc($branch['instagram']) . '</span>';
+                                        }
+                                        if (!empty($branch['cpf'])) {
+                                            $html .= '<span class="me-3"><i class="bi bi-card-text me-1 text-info"></i>' . esc($branch['cpf']) . '</span>';
+                                        }
                                     }
                                     
                                     $html .= '<span><i class="bi bi-key me-1 text-secondary"></i>Token: <code>' . esc($branch['token']) . '</code></span>
