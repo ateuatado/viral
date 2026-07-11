@@ -110,6 +110,7 @@ class CampaignController extends BaseController
         if (!$campaign) return redirect()->to('/admin/campaigns')->with('error', 'Campanha não encontrada.');
 
         $data = [
+            'id' => $id,
             'name' => $this->request->getPost('name'),
             'slug' => $this->request->getPost('slug'),
             'objective' => $this->request->getPost('objective'),
