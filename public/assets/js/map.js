@@ -40,16 +40,45 @@ function initMap(containerId, dataUrl) {
         maxZoom: 19,
     }).addTo(map);
 
+    // ── Legend control ──────────────────────────────────────────────
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.style.background = '#0f172a';
+        div.style.padding = '8px 12px';
+        div.style.borderRadius = '6px';
+        div.style.border = '1px solid #334155';
+        div.style.color = '#e9edef';
+        div.style.fontSize = '12px';
+        div.style.lineHeight = '1.6';
+        let html = '<div style="font-weight:600;margin-bottom:4px;">Profundidade</div>';
+        for (let i = 0; i < DEPTH_COLORS.length; i++) {
+            html += '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' +
+                DEPTH_COLORS[i] + ';margin-right:6px;"></span>' +
+                (i === 0 ? 'Semente (0)' : i === DEPTH_COLORS.length - 1 ? i + '+' : i) + '</div>';
+        }
+        html += '<hr style="border-color:#334155;margin:6px 0;">';
+        html += '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;margin-right:6px;border:2px solid #0f172a;width:14px;height:14px;"></span> Semente (10px)</div>';
+        html += '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;margin-right:6px;"></span> Visitante (6px)</div>';
+        div.innerHTML = html;
+        return div;
+    };
+    legend.addTo(map);
+
     // ── Fetch propagator data ───────────────────────────────────────
     fetch(dataUrl)
         .then(r => r.json())
-        .then(data => renderMarkers(data.nodes || []))
+        .then(data => renderMarkers(data.nodes || [], data.meta || {}))
         .catch(err => {
             showNoData('Erro ao carregar dados do mapa.');
             console.error('[map]', err);
         });
 
-    function renderMarkers(nodes) {
+    function renderMarkers(nodes, meta) {
+        // Remove existing no-data messages
+        const existingMsg = container.parentNode.querySelector('.map-no-data-msg');
+        if (existingMsg) existingMsg.remove();
+
         // Filter propagators with valid lat/lng
         const geoNodes = nodes.filter(n =>
             n.latitude !== null && n.longitude !== null &&
@@ -60,6 +89,9 @@ function initMap(containerId, dataUrl) {
             showNoData('Nenhum dado de geolocalização disponível para esta campanha.');
             return;
         }
+
+        // Show geo stats
+        showGeoStats(meta, geoNodes.length);
 
         const markers = [];
 
@@ -110,12 +142,35 @@ function initMap(containerId, dataUrl) {
         }
     }
 
+    function showGeoStats(meta, shownCount) {
+        const total = meta.total_propagators || 0;
+        const geo = meta.geo_propagators || shownCount;
+
+        const existingStats = container.parentNode.querySelector('.map-geo-stats');
+        if (existingStats) existingStats.remove();
+
+        const statsEl = document.createElement('div');
+        statsEl.className = 'map-geo-stats';
+        statsEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:12px;padding:12px 16px;margin-bottom:12px;background:#1e293b;border-radius:8px;border:1px solid #334155;color:#e9edef;font-size:13px;';
+        statsEl.innerHTML =
+            '<div><span style="color:#94a3b8;">Total de propagadores:</span> <strong>' + total + '</strong></div>' +
+            '<div><span style="color:#94a3b8;">Com geolocalização:</span> <strong style="color:#22c55e;">' + geo + '</strong></div>' +
+            '<div><span style="color:#94a3b8;">Exibidos no mapa:</span> <strong>' + shownCount + '</strong></div>';
+
+        container.parentNode.insertBefore(statsEl, container);
+    }
+
     function showNoData(message) {
-        container.insertAdjacentHTML('afterend',
-            '<div style="text-align:center;padding:2.5rem;color:#94a3b8;">' +
-            '<i class="bi bi-geo-alt" style="font-size:2.5rem;"></i>' +
-            '<p class="mt-2 mb-0">' + escHtml(message) + '</p>' +
-            '</div>');
+        const existingMsg = container.parentNode.querySelector('.map-no-data-msg');
+        if (existingMsg) existingMsg.remove();
+
+        const msgEl = document.createElement('div');
+        msgEl.className = 'map-no-data-msg';
+        msgEl.style.cssText = 'text-align:center;padding:4rem 2rem;color:#94a3b8;';
+        msgEl.innerHTML =
+            '<i class="bi bi-geo-alt" style="font-size:2.5rem;display:block;margin-bottom:1rem;"></i>' +
+            '<p class="mb-0">' + escHtml(message) + '</p>';
+        container.parentNode.insertBefore(msgEl, container.nextSibling);
     }
 
     function escHtml(str) {

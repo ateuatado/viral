@@ -36,15 +36,18 @@ class TrackingController extends BaseController
 
         if ((bool)$campaign['config_geoloc'] && $campaign['config_geoloc_mode'] === 'silent') {
             $ip = $this->request->getIPAddress();
+            $geoData = null;
+
             if ($ip === '127.0.0.1' || $ip === '::1') {
                 // São Paulo local test coordinates with small random offsets
                 $lat = -23.55052 + (mt_rand(-50, 50) / 1000);
                 $lng = -46.633308 + (mt_rand(-50, 50) / 1000);
                 $geoAccuracy = 5000;
             } else {
+                // Primary: ip-api.com (gratuito, ~45 req/min)
                 try {
                     $client = \Config\Services::curlrequest();
-                    $response = $client->get("http://ip-api.com/json/{$ip}", [
+                    $response = $client->get("http://ip-api.com/json/{$ip}?fields=status,lat,lon", [
                         'timeout' => 2,
                     ]);
                     $geoData = json_decode($response->getBody(), true);
@@ -54,8 +57,32 @@ class TrackingController extends BaseController
                         $geoAccuracy = 15000;
                     }
                 } catch (\Exception $e) {
-                    log_message('error', 'GeoIP Lookup Exception: ' . $e->getMessage());
+                    log_message('error', 'GeoIP Lookup (ip-api) Exception: ' . $e->getMessage());
                 }
+
+                // Fallback: ipapi.co (gratuito, ~1000 req/mês)
+                if (!$lat && !$lng) {
+                    try {
+                        $client = \Config\Services::curlrequest();
+                        $response = $client->get("https://ipapi.co/{$ip}/json/", [
+                            'timeout' => 2,
+                        ]);
+                        $geoData = json_decode($response->getBody(), true);
+                        if (isset($geoData['latitude']) && isset($geoData['longitude'])) {
+                            $lat = (float)$geoData['latitude'];
+                            $lng = (float)$geoData['longitude'];
+                            $geoAccuracy = 20000;
+                        }
+                    } catch (\Exception $e) {
+                        log_message('error', 'GeoIP Lookup (ipapi.co) Exception: ' . $e->getMessage());
+                    }
+                }
+            }
+
+            if ($lat && $lng) {
+                log_message('info', '[GeoIP] Silent location captured for IP ' . $ip . ': ' . $lat . ', ' . $lng);
+            } else {
+                log_message('warning', '[GeoIP] Could not determine location for IP: ' . $ip);
             }
         }
 

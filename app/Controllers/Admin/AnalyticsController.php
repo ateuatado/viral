@@ -108,11 +108,18 @@ class AnalyticsController extends BaseController
             return $max;
         };
 
+        $geoCount = 0;
+        $totalCount = count($propagators);
+
         foreach ($propagators as $p) {
             $tokenMap[$p['token']] = $p['id'];
 
             $maxDepthBelow = $getTreeDepth($p['token']);
             $discount = min(80, $maxDepthBelow * 10);
+
+            $hasLat = !empty($p['latitude']);
+            $hasLng = !empty($p['longitude']);
+            if ($hasLat && $hasLng) $geoCount++;
 
             $nodes[] = [
                 'id'        => $p['id'],
@@ -120,8 +127,8 @@ class AnalyticsController extends BaseController
                 'depth'     => (int) $p['depth'],
                 'is_seed'   => (bool) $p['is_seed'],
                 'viralized' => (bool) $p['viralized'],
-                'latitude'  => $p['latitude']  ? (float) $p['latitude']  : null,
-                'longitude' => $p['longitude'] ? (float) $p['longitude'] : null,
+                'latitude'  => $hasLat ? (float) $p['latitude'] : null,
+                'longitude' => $hasLng ? (float) $p['longitude'] : null,
                 'created_at' => $p['created_at'],
                 'platform'  => $p['platform'],
                 'ip'        => $p['ip'],
@@ -139,7 +146,14 @@ class AnalyticsController extends BaseController
             }
         }
 
-        return $this->response->setJSON(['nodes' => $nodes, 'links' => $links]);
+        return $this->response->setJSON([
+            'nodes' => $nodes,
+            'links' => $links,
+            'meta' => [
+                'total_propagators' => $totalCount,
+                'geo_propagators' => $geoCount,
+            ],
+        ]);
     }
 
     // ── JSON: tracking events ───────────────────────────────────────────
