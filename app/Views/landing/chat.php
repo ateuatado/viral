@@ -718,8 +718,8 @@ const VIRAL_CONFIG = {
 
         bodyHtml += `
         <button class="offer-cta" id="btnCta">${escapeHtml(C.offerCtaText)}</button>
-        <div style="font-size:11px; color:#8696a0; text-align:center; margin-top:12px; line-height:1.4;">
-            ℹ️ Tecnologia <strong>2gotas</strong>: Pesquisa aberta sobre distribuição orgânica de conteúdo amigável e saudável, sem insistência inconveniente ou invasiva.
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 12px; font-size: 11px; color: #8696a0; text-align: center; margin-top: 14px; line-height: 1.4;">
+            ℹ️ Esta campanha faz parte do <strong>2gotas</strong>, uma plataforma de pesquisa aberta cujo objetivo principal é pesquisar maneiras de espalhar conteúdo sem o inconveniente de ser insistente ou invasiva.
         </div>`;
 
         wrapper.innerHTML = `
@@ -928,8 +928,8 @@ const VIRAL_CONFIG = {
                     <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
                     Compartilhar no WhatsApp
                 </button>
-                <div style="font-size:11px; color:#8696a0; text-align:center; margin-top:12px; line-height:1.4;">
-                    ℹ️ Tecnologia <strong>2gotas</strong>: Espalhamento saudável e orgânico, livre de importunação.
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 12px; font-size: 11px; color: #8696a0; text-align: center; margin-top: 14px; line-height: 1.4;">
+                    ℹ️ Esta campanha faz parte do <strong>2gotas</strong>, uma plataforma de pesquisa aberta cujo objetivo principal é pesquisar maneiras de espalhar conteúdo sem o inconveniente de ser insistente ou invasiva.
                 </div>`;
             sharePanel.classList.add('visible');
         }
@@ -1026,8 +1026,8 @@ const VIRAL_CONFIG = {
                         <svg viewBox="0 0 24 24"><path d="M17.5 14.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-1.7-.9-2.8-2-3.7-3.5-.2-.3-.1-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4-.1-.5l-1-2.4c-.3-.6-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
                         Compartilhar no WhatsApp
                     </button>
-                    <div style="font-size:11px; color:#8696a0; text-align:center; margin-top:12px; line-height:1.4;">
-                        ℹ️ Tecnologia <strong>2gotas</strong>: Espalhamento saudável e orgânico, livre de importunação.
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 12px; font-size: 11px; color: #8696a0; text-align: center; margin-top: 14px; line-height: 1.4;">
+                        ℹ️ Esta campanha faz parte do <strong>2gotas</strong>, uma plataforma de pesquisa aberta cujo objetivo principal é pesquisar maneiras de espalhar conteúdo sem o inconveniente de ser insistente ou invasiva.
                     </div>
                 </div>
             </div>`;
