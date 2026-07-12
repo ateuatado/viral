@@ -470,8 +470,14 @@
                 </div>
             </div>
             
-        </div>
     </main>
+
+    <!-- Footer de Transparência -->
+    <footer class="container text-center py-4 mt-auto border-top border-secondary-subtle" style="max-width:800px; border-color: rgba(255,255,255,0.05) !important;">
+        <p class="text-muted mb-0" style="font-size: 11px; line-height: 1.5;">
+            Esta aplicação faz parte do <strong>2gotas</strong>, uma plataforma de pesquisa aberta destinada a analisar modelos inovadores de compartilhamento e espalhamento orgânico de conteúdo, com foco na distribuição amigável, sem técnicas insistentes, inconvenientes ou invasivas.
+        </p>
+    </footer>
 
     <!-- ── Toast de Feedback ───────────────────────────────────────────── -->
     <div class="toast-container-custom">
