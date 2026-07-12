@@ -38,6 +38,14 @@ $isExact = static function (string $path) use ($currentUrl): string {
             </a>
         </li>
 
+        <!-- Grafo Global -->
+        <li class="nav-item">
+            <a class="nav-link <?= $isActive('/admin/graph') ?>" href="/admin/graph">
+                <i class="bi bi-diagram-2"></i>
+                <span>Grafo Global</span>
+            </a>
+        </li>
+
         <!-- Campanhas -->
         <li class="nav-item">
             <a class="nav-link <?= $isActive('/admin/campaigns') ?>" href="/admin/campaigns">

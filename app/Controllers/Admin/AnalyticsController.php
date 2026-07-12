@@ -352,6 +352,88 @@ class AnalyticsController extends BaseController
         return view('admin/analytics/global_map');
     }
 
+    public function globalGraph()
+    {
+        return view('admin/analytics/global_graph');
+    }
+
+    public function globalGraphJson()
+    {
+        $db = \Config\Database::connect();
+        
+        $builder = $db->table('propagators');
+        $builder->select('propagators.*, campaigns.name as campaign_name');
+        $builder->join('campaigns', 'campaigns.id = propagators.campaign_id', 'left');
+        $builder->orderBy('propagators.created_at', 'ASC');
+        $propagators = $builder->get()->getResultArray();
+
+        $nodes    = [];
+        $links    = [];
+        $tokenMap = [];
+
+        // Build children map for tree depth
+        $childrenMap = [];
+        foreach ($propagators as $p) {
+            if (!empty($p['parent_token']) && (bool)$p['viralized']) {
+                $childrenMap[$p['parent_token']][] = $p['token'];
+            }
+        }
+
+        // Recursive tree depth calculator
+        $getTreeDepth = function(string $token) use (&$childrenMap, &$getTreeDepth): int {
+            if (!isset($childrenMap[$token]) || empty($childrenMap[$token])) {
+                return 0;
+            }
+            $max = 0;
+            foreach ($childrenMap[$token] as $childToken) {
+                $d = 1 + $getTreeDepth($childToken);
+                if ($d > $max) {
+                    $max = $d;
+                }
+            }
+            return $max;
+        };
+
+        foreach ($propagators as $p) {
+            $tokenMap[$p['token']] = $p['id'];
+
+            $maxDepthBelow = $getTreeDepth($p['token']);
+            $discount = min(80, $maxDepthBelow * 10);
+
+            $nodes[] = [
+                'id'            => $p['id'],
+                'token'         => $p['token'],
+                'depth'         => (int) $p['depth'],
+                'is_seed'       => (bool) $p['is_seed'],
+                'viralized'     => (bool) $p['viralized'],
+                'latitude'      => !empty($p['latitude']) ? (float) $p['latitude'] : null,
+                'longitude'     => !empty($p['longitude']) ? (float) $p['longitude'] : null,
+                'created_at'    => $p['created_at'],
+                'platform'      => $p['platform'],
+                'ip'            => $p['ip'],
+                'name'          => $p['name'],
+                'email'         => $p['email'],
+                'phone'         => $p['phone'],
+                'discount'      => $discount,
+                'campaign_name' => $p['campaign_name'] ?? 'Sem Campanha',
+            ];
+        }
+
+        foreach ($propagators as $p) {
+            if (!empty($p['parent_token']) && isset($tokenMap[$p['parent_token']])) {
+                $links[] = [
+                    'source' => $tokenMap[$p['parent_token']],
+                    'target' => $p['id'],
+                ];
+            }
+        }
+
+        return $this->response->setJSON([
+            'nodes' => $nodes,
+            'links' => $links,
+        ]);
+    }
+
     public function globalPropagatorsJson()
     {
         $db = \Config\Database::connect();

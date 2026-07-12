@@ -170,7 +170,11 @@ function initGraph(containerId, dataUrl) {
 
     function tooltipHtml(d) {
         const type = d.is_seed ? 'Semente' : (d.viralized ? 'Viralizado' : 'Normal');
-        let html = `<strong>${d.token}</strong><br>`;
+        let html = '';
+        if (d.campaign_name) {
+            html += `Campanha: <strong>${d.campaign_name}</strong><br>`;
+        }
+        html += `Token: <strong>${d.token}</strong><br>`;
         if (d.name) {
             html += `Nome: ${d.name}<br>`;
         }

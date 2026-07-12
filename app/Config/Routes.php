@@ -55,6 +55,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin'], function ($route
 
     // Analytics
     $routes->get('map', 'Admin\AnalyticsController::globalMap');
+    $routes->get('graph', 'Admin\AnalyticsController::globalGraph');
     $routes->get('campaigns/(:segment)/analytics', 'Admin\AnalyticsController::overview/$1');
     $routes->get('campaigns/(:segment)/analytics/graph', 'Admin\AnalyticsController::graph/$1');
     $routes->get('campaigns/(:segment)/analytics/map', 'Admin\AnalyticsController::map/$1');
@@ -62,6 +63,7 @@ $routes->group('admin', ['filter' => 'group:superadmin,admin'], function ($route
     $routes->get('campaigns/(:segment)/analytics/export', 'Admin\AnalyticsController::export/$1');
 
     // API Admin (JSON para JS)
+    $routes->get('api/propagators/graph', 'Admin\AnalyticsController::globalGraphJson');
     $routes->get('api/propagators', 'Admin\AnalyticsController::globalPropagatorsJson');
     $routes->get('api/campaigns/(:segment)/propagators', 'Admin\AnalyticsController::propagatorsJson/$1');
     $routes->get('api/campaigns/(:segment)/events', 'Admin\AnalyticsController::eventsJson/$1');
