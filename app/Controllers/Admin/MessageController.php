@@ -66,8 +66,10 @@ class MessageController extends BaseController
             return $this->response->setJSON(['error' => 'Arquivo inválido'])->setStatusCode(400);
         }
 
+        $mimeType = $file->getMimeType();
+
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'];
-        if (!in_array($file->getMimeType(), $allowedTypes)) {
+        if (!in_array($mimeType, $allowedTypes)) {
             return $this->response->setJSON(['error' => 'Tipo não permitido'])->setStatusCode(400);
         }
 
@@ -80,18 +82,21 @@ class MessageController extends BaseController
         if (!is_dir($campaignDir)) mkdir($campaignDir, 0755, true);
 
         $newName = $file->getRandomName();
+        $originalName = $file->getClientName();
+        $sizeBytes = $file->getSize();
+
         $file->move($campaignDir, $newName);
 
-        $type = str_starts_with($file->getMimeType(), 'video') ? 'video' : 'image';
+        $type = str_starts_with($mimeType, 'video') ? 'video' : 'image';
 
         $assetData = [
             'id' => generate_uuid(),
             'campaign_id' => $campaignId,
             'type' => $type,
-            'original_name' => $file->getClientName(),
+            'original_name' => $originalName,
             'stored_name' => $newName,
-            'mime_type' => $file->getMimeType(),
-            'size_bytes' => $file->getSize(),
+            'mime_type' => $mimeType,
+            'size_bytes' => $sizeBytes,
             'created_at' => date('Y-m-d H:i:s'),
         ];
         $this->assetModel->insert($assetData);
