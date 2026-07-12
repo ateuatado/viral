@@ -136,6 +136,7 @@ class AnalyticsController extends BaseController
                 'email'     => $p['email'],
                 'phone'     => $p['phone'],
                 'discount'  => $discount,
+                'campaign_name' => $campaign['name'] ?? '',
             ];
 
             if (!empty($p['parent_token']) && isset($tokenMap[$p['parent_token']])) {

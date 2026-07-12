@@ -109,6 +109,9 @@ function initGraph(containerId, dataUrl) {
             .data(nodes)
             .join('text')
             .text(d => {
+                if (d.is_seed && d.campaign_name) {
+                    return d.campaign_name.length > 18 ? d.campaign_name.substring(0, 16) + '...' : d.campaign_name;
+                }
                 if (d.name) {
                     const firstWord = d.name.trim().split(' ')[0];
                     const displayName = firstWord.length > 12 ? firstWord.substring(0, 10) + '..' : firstWord;
