@@ -346,6 +346,57 @@ class AnalyticsController extends BaseController
         return view('admin/analytics/leads', $data);
     }
 
+    // ── Global map ──────────────────────────────────────────────────────
+    public function globalMap()
+    {
+        return view('admin/analytics/global_map');
+    }
+
+    public function globalPropagatorsJson()
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('propagators');
+        $builder->select('propagators.*, campaigns.name as campaign_name');
+        $builder->join('campaigns', 'campaigns.id = propagators.campaign_id', 'left');
+        $builder->orderBy('propagators.created_at', 'ASC');
+        $propagators = $builder->get()->getResultArray();
+
+        $nodes    = [];
+        $geoCount = 0;
+        $totalCount = count($propagators);
+
+        foreach ($propagators as $p) {
+            $hasLat = !empty($p['latitude']);
+            $hasLng = !empty($p['longitude']);
+            if ($hasLat && $hasLng) $geoCount++;
+
+            $nodes[] = [
+                'id'            => $p['id'],
+                'token'         => $p['token'],
+                'depth'         => (int) $p['depth'],
+                'is_seed'       => (bool) $p['is_seed'],
+                'viralized'     => (bool) $p['viralized'],
+                'latitude'      => $hasLat ? (float) $p['latitude'] : null,
+                'longitude'     => $hasLng ? (float) $p['longitude'] : null,
+                'created_at'    => $p['created_at'],
+                'platform'      => $p['platform'],
+                'ip'            => $p['ip'],
+                'name'          => $p['name'],
+                'email'         => $p['email'],
+                'phone'         => $p['phone'],
+                'campaign_name' => $p['campaign_name'] ?? 'Sem Campanha',
+            ];
+        }
+
+        return $this->response->setJSON([
+            'nodes' => $nodes,
+            'meta' => [
+                'total_propagators' => $totalCount,
+                'geo_propagators' => $geoCount,
+            ],
+        ]);
+    }
+
     // ── Temporary Log Reader for debugging ──────────────────────────────
     public function readLogs()
     {

@@ -109,8 +109,11 @@ function initMap(containerId, dataUrl) {
 
             const type = n.is_seed ? 'Semente' : (n.viralized ? 'Viralizado' : 'Normal');
             let popupContent = 
-                '<div style="font-size:.85rem;line-height:1.6;">' +
-                '<strong>' + escHtml(n.token) + '</strong><br>';
+                '<div style="font-size:.85rem;line-height:1.6;">';
+            if (n.campaign_name) {
+                popupContent += 'Campanha: <strong>' + escHtml(n.campaign_name) + '</strong><br>';
+            }
+            popupContent += 'Token: <strong>' + escHtml(n.token) + '</strong><br>';
             if (n.name) {
                 popupContent += 'Nome: ' + escHtml(n.name) + '<br>';
             }

@@ -30,6 +30,14 @@ $isExact = static function (string $path) use ($currentUrl): string {
             </a>
         </li>
 
+        <!-- Mapa Global -->
+        <li class="nav-item">
+            <a class="nav-link <?= $isActive('/admin/map') ?>" href="/admin/map">
+                <i class="bi bi-map"></i>
+                <span>Mapa Global</span>
+            </a>
+        </li>
+
         <!-- Campanhas -->
         <li class="nav-item">
             <a class="nav-link <?= $isActive('/admin/campaigns') ?>" href="/admin/campaigns">
