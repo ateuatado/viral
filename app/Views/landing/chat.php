@@ -445,12 +445,6 @@
         <svg class="footer-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2 6a1 1 0 112 0v4a1 1 0 11-2 0V8zm5 0a1 1 0 112 0v4a1 1 0 11-2 0V8z"/></svg>
         <div class="mic-btn">
             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-        </div>
-    </div>
-
-    <!-- Rodapé de Transparência 2gotas -->
-    <div style="background:#111b21; color:#8696a0; font-size:11px; text-align:center; padding:10px 16px; border-top:1px solid rgba(255,255,255,.05); line-height:1.4; z-index: 10;">
-        ℹ️ Esta plataforma faz parte do <strong>2gotas</strong>, uma iniciativa de pesquisa aberta para estudar métodos saudáveis de espalhar conteúdo, sem comunicações insistentes ou invasivas.
     </div>
 </div>
 
