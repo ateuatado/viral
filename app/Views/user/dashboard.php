@@ -289,6 +289,19 @@
             </div>
         <?php endif; ?>
 
+        <!-- Banner Informativo -->
+        <div class="glass-card p-4 mb-4 d-flex flex-column flex-md-row align-items-center justify-content-between border border-primary border-opacity-25" style="background: linear-gradient(145deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%);">
+            <div>
+                <h4 class="mb-2 text-white"><i class="bi bi-camera-fill me-2 text-primary"></i>Conheça o James Webb Studio</h4>
+                <p class="text-muted mb-0" style="font-size: 14px;">Você está acumulando descontos exclusivos para usar em nossos ensaios e serviços fotográficos de alto padrão. Explore nosso portfólio e planeje seu próximo ensaio!</p>
+            </div>
+            <div class="mt-3 mt-md-0 ms-md-4 flex-shrink-0">
+                <a href="https://jameswebbstudio.com.br" target="_blank" class="btn btn-primary px-4 py-2 fw-bold text-nowrap" style="border-radius: 50px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
+                    <i class="bi bi-globe me-2"></i> Acessar Site Oficial
+                </a>
+            </div>
+        </div>
+
         <div class="row g-4">
             
             <!-- Coluna Esquerda: Estatísticas e Desconto -->
