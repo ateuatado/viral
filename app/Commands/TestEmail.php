@@ -30,7 +30,7 @@ class TestEmail extends BaseCommand
         $email = Services::email();
         $email->setTo($toEmail);
         $email->setSubject('Teste de envio de E-mail do CodeIgniter');
-        $email->setMessage('Se você está recebendo esta mensagem, o envio de e-mails via AWS SES está funcionando corretamente na aplicação Viral!');
+        $email->setMessage('Se você está recebendo esta mensagem, o envio de e-mails configurado no sistema Viral está funcionando corretamente!');
 
         if ($email->send()) {
             CLI::write('Success! Email sent successfully.', 'green');
